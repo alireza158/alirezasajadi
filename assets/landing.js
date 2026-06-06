@@ -284,14 +284,10 @@ const ADVISOR_LEAD_STORAGE_KEY = "advisorLeadData";
 const ADVISOR_SESSION_STORAGE_KEY = "advisorSessionId";
 
 const quickQuestions = [
-  "این دوره برای من که مبتدی هستم مناسبه؟",
-  "بعد از دوره دقیقاً چه چیزهایی می‌تونم بسازم؟",
-  "آیا می‌تونم سایت کامل با فرانت‌اند و بک‌اند بسازم؟",
-  "آیا برای کسب‌وکار خودم می‌تونم سایت بسازم؟",
-  "این دوره فقط آموزش ابزارهاست یا پروژه واقعی هم داریم؟",
-  "قیمت دوره و شرایط ثبت‌نام چیه؟",
-  "فرق این دوره با آموزش‌های معمولی طراحی سایت چیه؟",
-  "اگر برنامه‌نویسی بلد نباشم می‌تونم شروع کنم؟",
+  "این دوره برای مبتدی‌ها مناسبه؟",
+  "بعد از دوره چی می‌تونم بسازم؟",
+  "می‌تونم سایت کامل بسازم؟",
+  "قیمت و شرایط ثبت‌نام چیه؟",
 ];
 
 function normalizeAdvisorIntent(intent) {
@@ -385,8 +381,11 @@ function createAiConsultantChat() {
         <button class="ai-chat-close" type="button" aria-label="بستن چت">×</button>
       </header>
       <div class="ai-chat-messages" aria-live="polite" tabindex="0"></div>
-      <div class="ai-chat-questions" aria-label="سوالات آماده مشاوره"></div>
-      <div class="ai-chat-actions">
+      <section class="ai-chat-questions" aria-label="سوالات پیشنهادی مشاوره">
+        <span class="ai-chat-questions-title">سوالات پیشنهادی</span>
+        <div class="ai-chat-questions-grid" data-ai-chat-question-list></div>
+      </section>
+      <div class="ai-chat-register-action">
         <button class="advisor-register-cta" type="button">الان ثبت‌نام کنید</button>
       </div>
       <form class="ai-chat-form">
@@ -403,7 +402,8 @@ function createAiConsultantChat() {
   const closeButton = $(".ai-chat-close", widget);
   const panel = $(".ai-chat-panel", widget);
   const messagesRoot = $(".ai-chat-messages", widget);
-  const questionsRoot = $(".ai-chat-questions", widget);
+  const questionsRoot = $("[data-ai-chat-question-list]", widget);
+  const questionsSection = $(".ai-chat-questions", widget);
   const registerCta = $(".advisor-register-cta", widget);
   const form = $(".ai-chat-form", widget);
   const input = $(".ai-chat-input", widget);
@@ -480,6 +480,7 @@ function createAiConsultantChat() {
 
   function renderQuickQuestions() {
     questionsRoot.innerHTML = "";
+    questionsSection?.classList.toggle("is-empty", quickQuestions.length === 0);
     quickQuestions.forEach((question) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -628,7 +629,10 @@ function createAiConsultantChat() {
   registerCta.addEventListener("click", () => {
     if (typeof window.openRegisterModal === "function") {
       window.openRegisterModal();
+      return;
     }
+
+    document.querySelector("[data-open-register], [data-register-course]")?.click();
   });
 
   document.addEventListener("keydown", (event) => {
