@@ -2139,3 +2139,25 @@ body.advisor-open.register-open,
 html.advisor-open.register-open {
   touch-action: auto;
 }
+
+.admin-login-link {
+  display: inline-flex;
+  margin-inline-start: 10px;
+  color: rgba(226, 232, 240, 0.52);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.admin-login-link:hover,
+.admin-login-link:focus-visible {
+  color: rgba(255, 255, 255, 0.9);
+  outline: none;
+}
+@media (max-width: 640px) {
+  .admin-login-link {
+    margin-top: 8px;
+    min-height: 32px;
+    align-items: center;
+  }
+}

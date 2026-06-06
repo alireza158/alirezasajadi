@@ -1,6 +1,3 @@
-document.addEventListener('click', (event) => {
-  const button = event.target.closest('[data-toggle-details]');
-  if (!button) return;
-  const target = document.getElementById(button.dataset.toggleDetails);
-  if (target) target.classList.toggle('open');
+document.addEventListener('DOMContentLoaded', () => {
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach((el) => new bootstrap.Tooltip(el));
 });
