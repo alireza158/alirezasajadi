@@ -269,3 +269,174 @@ if (heroVisual && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
     heroVisual.style.transform = "";
   });
 }
+
+const AI_CONSULTANT_START_MESSAGE =
+  "سلام 👋 من مشاور هوشمند دوره آموزش طراحی سایت با هوش مصنوعی هستم. بگو الان در چه سطحی هستی تا راهنمایی‌ات کنم.";
+const AI_CONSULTANT_LIMIT_MESSAGE =
+  "برای راهنمایی بیشتر، شماره‌ات رو بفرست تا مشاور انسانی باهات تماس بگیره.";
+const AI_CONSULTANT_ERROR_MESSAGE =
+  "الان ارتباط با مشاور هوشمند برقرار نشد. لطفاً شماره‌ات رو بفرست تا مشاور انسانی باهات تماس بگیره.";
+const AI_CONSULTANT_PHONE_MESSAGE =
+  "شماره‌ات ثبت شد. مشاور دوره برای راهنمایی دقیق‌تر باهات تماس می‌گیره.";
+const AI_CONSULTANT_MAX_REPLIES = 10;
+const AI_CONSULTANT_COUNT_KEY = "aiConsultantReplyCount";
+
+const quickQuestions = [
+  "آیا این دوره برای مبتدی‌ها مناسبه؟",
+  "بعد از دوره چه چیزی می‌تونم بسازم؟",
+  "آیا بدون کدنویسی هم میشه شروع کرد؟",
+  "پشتیبانی دوره چطوریه؟",
+  "چطور ثبت‌نام کنم؟",
+];
+
+function createAiConsultantChat() {
+  const widget = document.createElement("section");
+  widget.className = "ai-chat-widget";
+  widget.setAttribute("aria-label", "مشاوره هوشمند خرید دوره");
+  widget.innerHTML = `
+    <button class="ai-chat-launcher" type="button" aria-expanded="false">
+      <span class="ai-chat-launcher-icon" aria-hidden="true">✨</span>
+      <span>مشاوره هوشمند خرید دوره</span>
+    </button>
+    <div class="ai-chat-panel" role="dialog" aria-modal="false" aria-label="گفتگوی مشاوره هوشمند">
+      <header class="ai-chat-header">
+        <div>
+          <span class="ai-chat-kicker">AI Course Advisor</span>
+          <strong>مشاور هوشمند خرید دوره</strong>
+          <p>کوتاه، فارسی و دقیق راهنمایی‌ات می‌کنم.</p>
+        </div>
+        <button class="ai-chat-close" type="button" aria-label="بستن چت">×</button>
+      </header>
+      <div class="ai-chat-messages" aria-live="polite"></div>
+      <div class="ai-chat-questions" aria-label="سوالات آماده"></div>
+      <form class="ai-chat-form">
+        <input class="ai-chat-input" type="text" inputmode="text" autocomplete="off" maxlength="900" placeholder="سوالت رو درباره دوره بنویس..." aria-label="پیام چت" />
+        <button class="ai-chat-send" type="submit">ارسال</button>
+      </form>
+    </div>
+  `;
+
+  document.body.append(widget);
+
+  const launcher = $(".ai-chat-launcher", widget);
+  const panel = $(".ai-chat-panel", widget);
+  const closeButton = $(".ai-chat-close", widget);
+  const messagesRoot = $(".ai-chat-messages", widget);
+  const questionsRoot = $(".ai-chat-questions", widget);
+  const form = $(".ai-chat-form", widget);
+  const input = $(".ai-chat-input", widget);
+  const sendButton = $(".ai-chat-send", widget);
+  const history = [];
+
+  let isBusy = false;
+  let aiReplyCount = Number(sessionStorage.getItem(AI_CONSULTANT_COUNT_KEY) || 0);
+
+  function setOpen(isOpen) {
+    widget.classList.toggle("open", isOpen);
+    launcher.setAttribute("aria-expanded", String(isOpen));
+
+    if (isOpen) {
+      setTimeout(() => input.focus(), 220);
+    }
+  }
+
+  function appendMessage(role, text) {
+    const message = document.createElement("div");
+    message.className = `ai-chat-message ${role === "user" ? "user" : "assistant"}`;
+
+    const bubble = document.createElement("p");
+    bubble.textContent = text;
+    message.append(bubble);
+    messagesRoot.append(message);
+    messagesRoot.scrollTo({ top: messagesRoot.scrollHeight, behavior: "smooth" });
+  }
+
+  function showTyping() {
+    const typing = document.createElement("div");
+    typing.className = "ai-chat-message assistant typing";
+    typing.innerHTML = `<p><span></span><span></span><span></span></p>`;
+    messagesRoot.append(typing);
+    messagesRoot.scrollTo({ top: messagesRoot.scrollHeight, behavior: "smooth" });
+    return typing;
+  }
+
+  function hasPhoneNumber(text) {
+    const normalized = text.replace(/[۰-۹]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
+    return /(?:\+?98|0)?9\d{9}/.test(normalized.replace(/[\s\-.()]/g, ""));
+  }
+
+  function setBusy(nextBusy) {
+    isBusy = nextBusy;
+    input.disabled = nextBusy;
+    sendButton.disabled = nextBusy;
+    sendButton.textContent = nextBusy ? "..." : "ارسال";
+  }
+
+  async function sendMessage(rawMessage) {
+    const message = rawMessage.trim();
+
+    if (!message || isBusy) {
+      return;
+    }
+
+    appendMessage("user", message);
+    input.value = "";
+
+    if (hasPhoneNumber(message)) {
+      appendMessage("assistant", AI_CONSULTANT_PHONE_MESSAGE);
+      return;
+    }
+
+    if (aiReplyCount >= AI_CONSULTANT_MAX_REPLIES) {
+      appendMessage("assistant", AI_CONSULTANT_LIMIT_MESSAGE);
+      return;
+    }
+
+    const typing = showTyping();
+    setBusy(true);
+
+    try {
+      const response = await fetch("/api/ai-consultant", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, history }),
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok || !data.answer) {
+        throw new Error(data.error || AI_CONSULTANT_ERROR_MESSAGE);
+      }
+
+      typing.remove();
+      appendMessage("assistant", data.answer);
+      history.push({ role: "user", content: message }, { role: "assistant", content: data.answer });
+      history.splice(0, Math.max(0, history.length - 8));
+      aiReplyCount += 1;
+      sessionStorage.setItem(AI_CONSULTANT_COUNT_KEY, String(aiReplyCount));
+    } catch (error) {
+      typing.remove();
+      appendMessage("assistant", AI_CONSULTANT_ERROR_MESSAGE);
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  quickQuestions.forEach((question) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = question;
+    button.addEventListener("click", () => sendMessage(question));
+    questionsRoot.append(button);
+  });
+
+  appendMessage("assistant", AI_CONSULTANT_START_MESSAGE);
+
+  launcher.addEventListener("click", () => setOpen(!widget.classList.contains("open")));
+  closeButton.addEventListener("click", () => setOpen(false));
+  form.addEventListener("submit", (event) => {
+    event.preventDefault();
+    sendMessage(input.value);
+  });
+}
+
+createAiConsultantChat();
