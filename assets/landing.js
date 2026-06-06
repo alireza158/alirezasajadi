@@ -443,9 +443,24 @@ function createAiConsultantChat() {
   let isWaitingForApi = false;
   const chatHistory = [];
 
-  function focusAdvisorInput() {
-    setTimeout(() => input.focus({ preventScroll: true }), 180);
+  function isRegisterModalOpen() {
+    return document.body.classList.contains("register-modal-open") || document.body.classList.contains("register-open");
   }
+
+  function focusAdvisorInput() {
+    setTimeout(() => {
+      if (!isRegisterModalOpen() && !input.disabled) {
+        input.focus({ preventScroll: true });
+      }
+    }, 180);
+  }
+
+  function setChatDisabled(disabled) {
+    input.disabled = disabled || isWaitingForApi;
+    sendButton.disabled = disabled || isWaitingForApi;
+  }
+
+  window.setAdvisorChatDisabled = setChatDisabled;
 
   function setOpen(isOpen) {
     const alreadyOpen = widget.classList.contains("open");
@@ -524,8 +539,7 @@ function createAiConsultantChat() {
 
   function setWaiting(waiting) {
     isWaitingForApi = waiting;
-    input.disabled = waiting;
-    sendButton.disabled = waiting;
+    setChatDisabled(isRegisterModalOpen());
     questionsRoot.querySelectorAll("button").forEach((button) => {
       button.disabled = waiting;
     });
@@ -590,6 +604,10 @@ function createAiConsultantChat() {
   }
 
   async function sendAdvisorMessage(rawMessage) {
+    if (isRegisterModalOpen()) {
+      return;
+    }
+
     const message = String(rawMessage || "").trim();
     if (!message || isWaitingForApi) {
       return;
@@ -658,16 +676,19 @@ function createAiConsultantChat() {
 
   closeButton.addEventListener("click", closeAdvisorPopup);
   backdrop.addEventListener("click", closeAdvisorPopup);
-  registerCta.addEventListener("click", () => {
+  registerCta.addEventListener("click", (event) => {
+    event.preventDefault();
+    event.stopPropagation();
     if (typeof window.openRegisterModal === "function") {
       window.openRegisterModal();
-      return;
     }
-
-    window.openRegisterModal?.();
   });
 
   document.addEventListener("keydown", (event) => {
+    if (event.target?.closest?.(".register-modal, .register-form") || isRegisterModalOpen()) {
+      return;
+    }
+
     if (event.key === "Escape" && widget.classList.contains("open")) {
       closeAdvisorPopup();
     }
@@ -675,6 +696,12 @@ function createAiConsultantChat() {
 
   form.addEventListener("submit", (event) => {
     event.preventDefault();
+    event.stopPropagation();
+
+    if (!event.target.classList.contains("ai-chat-form") || event.target !== form || isRegisterModalOpen()) {
+      return;
+    }
+
     sendAdvisorMessage(input.value);
   });
 
@@ -690,7 +717,7 @@ function createAiConsultantChat() {
   });
 
   panel.addEventListener("transitionend", () => {
-    if (widget.classList.contains("open")) {
+    if (widget.classList.contains("open") && !isRegisterModalOpen()) {
       focusAdvisorInput();
     }
   });
@@ -791,14 +818,36 @@ function initCourseRegistration() {
     setTimeout(() => target?.focus({ preventScroll: true }), 80);
   }
 
+  function setChatDisabled(disabled) {
+    const chatInput = document.querySelector(".ai-chat-input");
+    const chatSend = document.querySelector(".ai-chat-send");
+
+    if (chatInput) {
+      if (disabled) {
+        chatInput.blur();
+      }
+      chatInput.disabled = disabled;
+    }
+
+    if (chatSend) {
+      chatSend.disabled = disabled;
+    }
+
+    if (typeof window.setAdvisorChatDisabled === "function") {
+      window.setAdvisorChatDisabled(disabled);
+    }
+  }
+
   function openRegisterModal() {
     lastFocusedElement = document.activeElement;
+    document.querySelector(".ai-chat-input")?.blur();
+    setChatDisabled(true);
     prefillForm();
     clearErrors();
     modal.classList.add("open");
     modal.setAttribute("aria-hidden", "false");
-    document.documentElement.classList.add("register-open");
-    document.body.classList.add("register-open");
+    document.documentElement.classList.add("register-open", "register-modal-open");
+    document.body.classList.add("register-open", "register-modal-open");
     trackLead("register-form", { ...readAdvisorLeadData(), intent: "register" });
     focusFirstEmptyField();
   }
@@ -806,10 +855,22 @@ function initCourseRegistration() {
   function closeRegisterModal({ restoreFocus = true } = {}) {
     modal.classList.remove("open");
     modal.setAttribute("aria-hidden", "true");
-    document.documentElement.classList.remove("register-open");
-    document.body.classList.remove("register-open");
+    document.documentElement.classList.remove("register-open", "register-modal-open");
+    document.body.classList.remove("register-open", "register-modal-open");
+    setChatDisabled(false);
 
-    if (restoreFocus && lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+    if (!restoreFocus) {
+      return;
+    }
+
+    const chatWidget = document.querySelector(".ai-chat-widget.open");
+    const chatInput = document.querySelector(".ai-chat-input");
+    if (chatWidget && chatInput) {
+      setTimeout(() => chatInput.focus({ preventScroll: true }), 100);
+      return;
+    }
+
+    if (lastFocusedElement && typeof lastFocusedElement.focus === "function") {
       lastFocusedElement.focus({ preventScroll: true });
     }
   }
@@ -847,6 +908,11 @@ function initCourseRegistration() {
 
   async function submitRegistration(event) {
     event.preventDefault();
+    event.stopPropagation();
+
+    if (event.target !== form || !event.target.classList.contains("register-form")) {
+      return;
+    }
 
     if (!validateForm()) {
       return;
@@ -893,13 +959,20 @@ function initCourseRegistration() {
       } else {
         openRegisterModal();
       }
-      return;
     }
+  });
 
+  modal.addEventListener("click", (event) => {
     if (event.target.closest("[data-close-register]")) {
       event.preventDefault();
       closeRegisterModal();
     }
+  });
+
+  ["click", "keydown", "input", "submit"].forEach((eventName) => {
+    modal.addEventListener(eventName, (event) => {
+      event.stopPropagation();
+    });
   });
 
   $(`[data-back-to-advisor]`, form)?.addEventListener("click", () => {
@@ -909,8 +982,9 @@ function initCourseRegistration() {
     }
   });
 
-  document.addEventListener("keydown", (event) => {
+  modal.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && modal.classList.contains("open")) {
+      event.preventDefault();
       closeRegisterModal();
     }
   });
