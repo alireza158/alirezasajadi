@@ -294,11 +294,12 @@ function createAiConsultantChat() {
   widget.className = "ai-chat-widget";
   widget.setAttribute("aria-label", "مشاوره هوشمند خرید دوره");
   widget.innerHTML = `
-    <button class="ai-chat-launcher" type="button" aria-expanded="false">
+    <button class="ai-chat-launcher" type="button" aria-expanded="false" aria-controls="ai-consultant-panel">
       <span class="ai-chat-launcher-icon" aria-hidden="true">✨</span>
       <span>مشاوره هوشمند خرید دوره</span>
     </button>
-    <div class="ai-chat-panel" role="dialog" aria-modal="false" aria-label="گفتگوی مشاوره هوشمند">
+    <div class="ai-chat-backdrop" aria-hidden="true"></div>
+    <div class="ai-chat-panel" id="ai-consultant-panel" role="dialog" aria-modal="true" aria-label="گفتگوی مشاوره هوشمند">
       <header class="ai-chat-header">
         <div>
           <span class="ai-chat-kicker">AI Course Advisor</span>
@@ -307,7 +308,7 @@ function createAiConsultantChat() {
         </div>
         <button class="ai-chat-close" type="button" aria-label="بستن چت">×</button>
       </header>
-      <div class="ai-chat-messages" aria-live="polite"></div>
+      <div class="ai-chat-messages" aria-live="polite" tabindex="0"></div>
       <div class="ai-chat-questions" aria-label="سوالات آماده"></div>
       <form class="ai-chat-form">
         <input class="ai-chat-input" type="text" inputmode="text" autocomplete="off" maxlength="900" placeholder="سوالت رو درباره دوره بنویس..." aria-label="پیام چت" />
@@ -319,7 +320,7 @@ function createAiConsultantChat() {
   document.body.append(widget);
 
   const launcher = $(".ai-chat-launcher", widget);
-  const panel = $(".ai-chat-panel", widget);
+  const backdrop = $(".ai-chat-backdrop", widget);
   const closeButton = $(".ai-chat-close", widget);
   const messagesRoot = $(".ai-chat-messages", widget);
   const questionsRoot = $(".ai-chat-questions", widget);
@@ -334,9 +335,14 @@ function createAiConsultantChat() {
   function setOpen(isOpen) {
     widget.classList.toggle("open", isOpen);
     launcher.setAttribute("aria-expanded", String(isOpen));
+    // Lock page scroll while the popup is open; only the message area can scroll.
+    document.documentElement.classList.toggle("ai-chat-page-lock", isOpen);
+    document.body.classList.toggle("ai-chat-page-lock", isOpen);
 
     if (isOpen) {
       setTimeout(() => input.focus(), 220);
+    } else {
+      launcher.focus();
     }
   }
 
@@ -433,6 +439,12 @@ function createAiConsultantChat() {
 
   launcher.addEventListener("click", () => setOpen(!widget.classList.contains("open")));
   closeButton.addEventListener("click", () => setOpen(false));
+  backdrop.addEventListener("click", () => setOpen(false));
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && widget.classList.contains("open")) {
+      setOpen(false);
+    }
+  });
   form.addEventListener("submit", (event) => {
     event.preventDefault();
     sendMessage(input.value);
