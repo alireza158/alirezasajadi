@@ -82,6 +82,8 @@
           class="btn btn-small btn-primary nav-cta"
           href="#start"
           aria-label="شروع یادگیری"
+          data-open-advisor
+          data-advisor-intent="start"
           >شروع یادگیری</a
         >
       </nav>
@@ -98,7 +100,7 @@
               روی چیدمان، متن، تجربه کاربری و اصلاح خروجی.
             </p>
             <div class="hero-actions">
-              <a class="btn btn-primary" href="#start" aria-label="شروع آموزش"
+              <a class="btn btn-primary" href="#start" aria-label="شروع آموزش" data-open-advisor data-advisor-intent="start"
                 >شروع آموزش</a
               >
               <a
@@ -106,6 +108,14 @@
                 href="#path"
                 aria-label="دیدن مسیر یادگیری"
                 >دیدن مسیر یادگیری</a
+              >
+              <a
+                class="btn btn-ghost"
+                href="#start"
+                aria-label="مشاوره رایگان"
+                data-open-advisor
+                data-advisor-intent="consultation"
+                >مشاوره رایگان</a
               >
             </div>
             <p class="trust-line">
@@ -331,9 +341,14 @@
               کن.
             </p>
           </div>
-          <a class="btn btn-light" href="#curriculum" aria-label="شروع یادگیری"
-            >شروع یادگیری</a
-          >
+          <div class="hero-actions">
+            <a class="btn btn-light" href="#curriculum" aria-label="شروع یادگیری" data-open-advisor data-advisor-intent="start"
+              >شروع یادگیری</a
+            >
+            <a class="btn btn-ghost" href="#start" aria-label="ثبت‌نام در دوره" data-open-advisor data-advisor-intent="register"
+              >ثبت‌نام در دوره</a
+            >
+          </div>
         </div>
       </section>
 
@@ -388,12 +403,21 @@
               class="btn btn-primary"
               href="#start"
               aria-label="شروع یادگیری طراحی سایت با AI"
+              data-open-advisor
+              data-advisor-intent="start"
               >شروع یادگیری طراحی سایت</a
             ><a
               class="btn btn-ghost"
               href="#curriculum"
               aria-label="مشاهده سرفصل‌ها"
               >مشاهده سرفصل‌ها</a
+            ><a
+              class="btn btn-ghost"
+              href="#start"
+              aria-label="دریافت مشاوره"
+              data-open-advisor
+              data-advisor-intent="consultation"
+              >دریافت مشاوره</a
             >
           </div>
         </div>

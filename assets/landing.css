@@ -1536,3 +1536,162 @@ body.ai-chat-page-lock {
     width: 100%;
   }
 }
+
+/* Advisor popup enhancements */
+html.advisor-open,
+body.advisor-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+body.advisor-open {
+  touch-action: none;
+}
+.ai-chat-widget.open {
+  pointer-events: auto;
+}
+.ai-chat-widget.open .ai-chat-launcher {
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(10px) scale(0.94);
+}
+.ai-chat-panel {
+  position: fixed;
+  inset: 50% auto auto 50%;
+  right: auto;
+  bottom: auto;
+  width: min(520px, calc(100vw - 40px));
+  height: min(680px, calc(100dvh - 48px));
+  max-height: calc(100dvh - 48px);
+  transform: translate(-50%, calc(-50% + 18px)) scale(0.96);
+  transform-origin: center;
+}
+.ai-chat-widget.open .ai-chat-panel {
+  transform: translate(-50%, -50%) scale(1);
+}
+.ai-chat-questions {
+  max-height: 184px;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+.ai-chat-questions:empty {
+  display: none;
+}
+.ai-chat-questions button.advisor-option-card {
+  flex: 1 1 100%;
+  min-width: 0;
+  border-radius: 18px;
+  text-align: right;
+  font-size: 0.9rem;
+  font-weight: 800;
+  padding: 12px 14px;
+  background:
+    linear-gradient(135deg, rgba(48, 232, 255, 0.14), rgba(139, 92, 246, 0.1)),
+    rgba(255, 255, 255, 0.055);
+}
+.ai-chat-questions button.advisor-option-card:hover,
+.ai-chat-questions button.advisor-option-card:focus-visible {
+  transform: translateY(-2px);
+  border-color: rgba(48, 232, 255, 0.55);
+  background:
+    linear-gradient(135deg, rgba(48, 232, 255, 0.22), rgba(244, 63, 139, 0.13)),
+    rgba(255, 255, 255, 0.08);
+  outline: 0;
+}
+.ai-chat-questions button.advisor-register-cta,
+.ai-chat-pay-button {
+  flex: 1 1 100%;
+  min-width: 0;
+  min-height: 52px;
+  border: 0;
+  border-radius: 18px;
+  color: #06111f;
+  background: linear-gradient(135deg, #30e8ff, #ffffff 46%, #f9d65c);
+  box-shadow:
+    0 18px 42px rgba(48, 232, 255, 0.25),
+    inset 0 1px 0 rgba(255, 255, 255, 0.75);
+  font-size: 1rem;
+  font-weight: 950;
+}
+.ai-chat-questions button.advisor-register-cta:hover,
+.ai-chat-pay-button:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    0 24px 54px rgba(48, 232, 255, 0.34),
+    0 0 32px rgba(249, 214, 92, 0.18);
+}
+.ai-chat-registration {
+  display: grid;
+  gap: 12px;
+  width: min(92%, 380px);
+  align-self: flex-end;
+  border: 1px solid rgba(48, 232, 255, 0.22);
+  border-radius: 22px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(48, 232, 255, 0.16), transparent 35%),
+    rgba(255, 255, 255, 0.075);
+  padding: 16px;
+  box-shadow: 0 18px 46px rgba(0, 0, 0, 0.18);
+}
+.ai-chat-registration strong {
+  color: #fff;
+  font-size: 1.02rem;
+}
+.ai-chat-registration label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+.ai-chat-registration input {
+  width: 100%;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 16px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  outline: 0;
+  padding: 12px 13px;
+  font: inherit;
+}
+.ai-chat-registration input:focus {
+  border-color: rgba(48, 232, 255, 0.52);
+  box-shadow: 0 0 0 4px rgba(48, 232, 255, 0.1);
+}
+.ai-chat-registration small {
+  color: rgba(216, 228, 245, 0.72);
+  font-size: 0.78rem;
+  line-height: 1.8;
+}
+.ai-chat-pay-button {
+  cursor: pointer;
+  font: inherit;
+  padding: 0 16px;
+  transition: 0.2s;
+}
+@media (max-width: 640px) {
+  .ai-chat-widget.open .ai-chat-launcher {
+    opacity: 0;
+  }
+  .ai-chat-panel {
+    inset: 50% auto auto 50%;
+    width: min(100vw - 20px, 520px);
+    height: min(720px, calc(100dvh - 20px));
+    max-height: calc(100dvh - 20px);
+    border-radius: 24px;
+    transform-origin: center;
+  }
+  .ai-chat-questions {
+    max-height: 210px;
+  }
+  .ai-chat-registration {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ai-chat-panel,
+  .ai-chat-widget.open .ai-chat-panel,
+  .ai-chat-questions button.advisor-option-card:hover,
+  .ai-chat-pay-button:hover {
+    transition: none;
+  }
+}
