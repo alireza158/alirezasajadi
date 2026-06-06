@@ -361,7 +361,7 @@ function saveChatMessage(role, content, extra = {}) {
     intent: data.intent || "general",
   };
 
-  return fetch("/api/save-chat-message", {
+  return fetch("/ai-consultant/api/save-chat-message", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(payload),
@@ -585,7 +585,7 @@ function createAiConsultantChat() {
   }
 
   async function fetchAdvisorAnswer(message) {
-    const response = await fetch("/api/ai-consultant", {
+    const response = await fetch("/ai-consultant/api/ai-consultant", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
