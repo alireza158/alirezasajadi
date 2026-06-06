@@ -81,6 +81,7 @@ $email = post_value('email', 180);
 $level = post_value('level', 250);
 $goal = post_value('goal', 400);
 $note = post_value('note', 1000);
+$sessionId = post_value('session_id', 140);
 $postedAmount = post_value('amount', 30);
 
 if ($name === '') respond_json(true, 'نام و نام خانوادگی را وارد کنید.');
@@ -90,7 +91,7 @@ if ($email !== '' && !filter_var($email, FILTER_VALIDATE_EMAIL)) respond_json(tr
 $paymentAmount = (int) ($settings['payment_amount'] ?? DEFAULT_SETTINGS['payment_amount']);
 if ($postedAmount !== '' && (int) $postedAmount !== $paymentAmount) respond_json(true, 'مبلغ پرداخت با مبلغ دوره هم‌خوانی ندارد.');
 
-upsert_lead(['name' => $name, 'phone' => $phone, 'email' => $email, 'level' => $level, 'goal' => $goal, 'source' => 'register-form', 'intent' => 'register']);
+upsert_lead(['session_id' => $sessionId, 'name' => $name, 'phone' => $phone, 'email' => $email, 'level' => $level, 'goal' => $goal, 'source' => 'register-form', 'intent' => 'register', 'status' => 'new']);
 
 $orders = read_orders();
 $trackingCode = make_tracking_code($orders);
@@ -107,6 +108,7 @@ unset($safeGatewayPayload['merchant_id']);
 $order = [
     'id' => count($orders) + 1,
     'tracking_code' => $trackingCode,
+    'session_id' => $sessionId,
     'authority' => null,
     'name' => $name,
     'phone' => $phone,

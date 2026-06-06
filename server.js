@@ -2,8 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
+const fs = require("fs/promises");
 
 const rootDir = __dirname;
+const dataDir = path.join(rootDir, "data");
+const chatsFile = path.join(dataDir, "chats.json");
+const leadsFile = path.join(dataDir, "leads.json");
 dotenv.config({ path: path.join(rootDir, ".env") });
 dotenv.config({ path: path.join(rootDir, ".env.local"), override: true });
 
@@ -179,6 +183,78 @@ const systemPrompt = `تو یک مشاور فروش حرفه‌ای، صمیمی
 app.use(cors({ origin: process.env.CORS_ORIGIN || false }));
 app.use(express.json({ limit: "24kb" }));
 
+
+function normalizeDigits(value = "") {
+  return String(value).replace(/[۰-۹٠-٩]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩".indexOf(digit) % 10);
+}
+
+function normalizeMobile(phone = "") {
+  const value = normalizeDigits(phone).replace(/[\s\-()]/g, "");
+  const match = value.match(/^(?:\+98|0098|98)?(9\d{9})$/) || value.match(/^(09\d{9})$/);
+  if (!match) return "";
+  return match[1].startsWith("09") ? match[1] : `0${match[1]}`;
+}
+
+function extractMobileFromText(content = "") {
+  const match = normalizeDigits(content).match(/(?:\+98|0098|98|0)?9\d{9}/);
+  return match ? normalizeMobile(match[0]) : "";
+}
+
+async function readJsonFile(file, fallback = []) {
+  try {
+    await fs.mkdir(path.dirname(file), { recursive: true });
+    const content = await fs.readFile(file, "utf8");
+    const parsed = JSON.parse(content || "[]");
+    return Array.isArray(parsed) ? parsed : fallback;
+  } catch (error) {
+    if (error.code === "ENOENT") {
+      await writeJsonFile(file, fallback);
+    }
+    return fallback;
+  }
+}
+
+async function writeJsonFile(file, data) {
+  await fs.mkdir(path.dirname(file), { recursive: true });
+  await fs.writeFile(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+}
+
+function nextId(items) {
+  return items.reduce((max, item) => Math.max(max, Number(item.id) || 0), 0) + 1;
+}
+
+async function upsertLead(data) {
+  const leads = await readJsonFile(leadsFile, []);
+  const phone = normalizeMobile(data.phone || "");
+  const email = cleanMessage(data.email || "", 180);
+  const sessionId = cleanMessage(data.session_id || "", 140);
+  const now = new Date().toISOString();
+  let index = leads.findIndex((lead) =>
+    (phone && lead.phone === phone) ||
+    (!phone && email && lead.email === email) ||
+    (!phone && !email && sessionId && lead.session_id === sessionId),
+  );
+  const status = cleanMessage(data.status || data.follow_status || "new", 50);
+  const payload = {
+    session_id: sessionId,
+    name: cleanMessage(data.name || "", 160),
+    phone,
+    email,
+    level: cleanMessage(data.level || "", 250),
+    goal: cleanMessage(data.goal || "", 500),
+    source: cleanMessage(data.source || "chat", 80),
+    intent: cleanMessage(data.intent || "general", 80),
+    status,
+    follow_status: status,
+  };
+  if (index < 0) {
+    leads.push({ id: nextId(leads), created_at: now, updated_at: now, admin_note: "", ...payload });
+  } else {
+    leads[index] = { ...leads[index], ...Object.fromEntries(Object.entries(payload).filter(([, value]) => value !== "")), updated_at: now };
+  }
+  await writeJsonFile(leadsFile, leads);
+}
+
 function cleanMessage(value, maxLength = 900) {
   if (typeof value !== "string") {
     return "";
@@ -201,6 +277,64 @@ function normalizeHistory(history) {
     .filter((item) => item.content)
     .slice(-8);
 }
+
+
+app.post("/api/save-chat-message", async (req, res) => {
+  const sessionId = cleanMessage(req.body?.session_id, 140);
+  const role = ["user", "assistant"].includes(req.body?.role) ? req.body.role : "user";
+  const content = cleanMessage(req.body?.content, 1600);
+  const intent = cleanMessage(req.body?.intent || "general", 80);
+  const type = cleanMessage(req.body?.type || "message", 40);
+  const messageId = cleanMessage(req.body?.message_id || `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`, 160);
+
+  if (!sessionId) return res.status(422).json({ error: true, message: "session_id is required." });
+  if (!content) return res.status(422).json({ error: true, message: "content is required." });
+
+  const now = new Date().toISOString();
+  const userName = cleanMessage(req.body?.user_name || "", 160);
+  const userPhone = normalizeMobile(req.body?.user_phone || "") || extractMobileFromText(content);
+  const chats = await readJsonFile(chatsFile, []);
+  let chat = chats.find((item) => item.session_id === sessionId);
+  const message = { id: messageId, role, type, content, created_at: now, intent };
+
+  if (!chat) {
+    chat = {
+      session_id: sessionId,
+      intent,
+      status: "open",
+      user_name: userName,
+      user_phone: userPhone,
+      messages: [message],
+      first_message_at: now,
+      started_at: now,
+      last_message_at: now,
+      admin_note: "",
+    };
+    chats.push(chat);
+  } else {
+    chat.messages = Array.isArray(chat.messages) ? chat.messages : [];
+    const duplicateById = chat.messages.some((item) => item.id && item.id === message.id);
+    const last = chat.messages.at(-1);
+    const duplicateTail = last && last.role === role && last.content === content && (last.type || "message") === type;
+    if (!duplicateById && !duplicateTail) {
+      chat.messages.push(message);
+      chat.last_message_at = now;
+    }
+    chat.first_message_at ||= now;
+    chat.started_at ||= chat.first_message_at;
+    chat.intent ||= intent;
+    chat.status ||= "open";
+    chat.admin_note ||= "";
+    if (userName) chat.user_name = userName;
+    if (userPhone) chat.user_phone = userPhone;
+  }
+
+  await writeJsonFile(chatsFile, chats);
+  if (userName || userPhone) {
+    await upsertLead({ session_id: sessionId, name: userName, phone: userPhone, source: "chat", intent, status: "new" });
+  }
+  return res.json({ error: false, session_id: sessionId, message_count: chat.messages.length });
+});
 
 app.post("/api/ai-consultant", async (req, res) => {
   const message = cleanMessage(req.body?.message);
