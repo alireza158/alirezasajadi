@@ -2139,3 +2139,210 @@ body.advisor-open.register-open,
 html.advisor-open.register-open {
   touch-action: auto;
 }
+
+/* Final advisor quick-question layout cleanup */
+html,
+body {
+  overflow-x: hidden;
+}
+
+.ai-chat-widget,
+.ai-chat-panel,
+.ai-chat-messages {
+  overflow-x: hidden;
+}
+
+.ai-chat-widget {
+  width: min(460px, calc(100vw - 48px));
+}
+
+.ai-chat-panel {
+  display: flex;
+  flex-direction: column;
+  width: min(460px, calc(100vw - 40px));
+  height: min(80dvh, 720px);
+  max-height: 80dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.ai-chat-header,
+.ai-chat-questions,
+.ai-chat-register-action,
+.ai-chat-form {
+  flex-shrink: 0;
+}
+
+.ai-chat-messages {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.ai-chat-questions {
+  display: grid;
+  gap: 10px;
+  margin: 0 18px 12px;
+  padding: 12px;
+  max-height: none;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(48, 232, 255, 0.1), transparent 34%),
+    rgba(0, 0, 0, 0.16);
+}
+
+.ai-chat-questions.is-empty {
+  display: none;
+}
+
+.ai-chat-questions-title {
+  display: block;
+  color: rgba(216, 228, 245, 0.78);
+  font-size: 0.78rem;
+  font-weight: 900;
+  line-height: 1.6;
+}
+
+.ai-chat-questions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  min-width: 0;
+}
+
+.ai-chat-questions button,
+.ai-chat-questions button.advisor-option-card {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100%;
+  min-width: 0;
+  min-height: 42px;
+  padding: 9px 12px;
+  border: 1px solid rgba(48, 232, 255, 0.2);
+  border-radius: 999px;
+  color: #dff8ff;
+  background: rgba(48, 232, 255, 0.075);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 850;
+  line-height: 1.65;
+  text-align: right;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: normal;
+  transition:
+    transform 0.2s ease,
+    border-color 0.2s ease,
+    background 0.2s ease;
+}
+
+.ai-chat-questions button:hover,
+.ai-chat-questions button:focus-visible,
+.ai-chat-questions button.advisor-option-card:hover,
+.ai-chat-questions button.advisor-option-card:focus-visible {
+  border-color: rgba(48, 232, 255, 0.52);
+  background: rgba(48, 232, 255, 0.14);
+  transform: translateY(-1px);
+  outline: 0;
+}
+
+.ai-chat-register-action {
+  display: grid;
+  padding: 0 18px 12px;
+}
+
+.ai-chat-register-action .advisor-register-cta {
+  width: 100%;
+  min-height: 52px;
+  border: 0;
+  border-radius: 999px;
+  color: #06111f;
+  background: linear-gradient(135deg, #38e7ff, #ff4fd8 54%, #ffe680);
+  box-shadow:
+    0 18px 46px rgba(255, 79, 216, 0.22),
+    0 14px 36px rgba(56, 231, 255, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1rem;
+  font-weight: 950;
+  line-height: 1.5;
+  padding: 0 18px;
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease,
+    opacity 0.2s ease;
+}
+
+.ai-chat-register-action .advisor-register-cta:hover,
+.ai-chat-register-action .advisor-register-cta:focus-visible {
+  transform: translateY(-2px);
+  box-shadow:
+    0 24px 58px rgba(255, 79, 216, 0.3),
+    0 18px 44px rgba(56, 231, 255, 0.24),
+    0 0 34px rgba(255, 230, 128, 0.18);
+  outline: 0;
+}
+
+.ai-chat-register-action .advisor-register-cta:disabled,
+.ai-chat-questions button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+.ai-chat-form {
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+@media (max-width: 640px) {
+  .ai-chat-widget {
+    right: 12px;
+    left: 12px;
+    bottom: 12px;
+    width: calc(100vw - 24px);
+    max-width: none;
+  }
+
+  .ai-chat-panel {
+    inset: 50% auto auto 50%;
+    width: calc(100vw - 24px);
+    max-width: none;
+    height: min(86dvh, 720px);
+    max-height: min(86dvh, 720px);
+    border-radius: 24px;
+    transform-origin: center;
+  }
+
+  .ai-chat-questions {
+    margin: 0 14px 10px;
+    padding: 10px;
+  }
+
+  .ai-chat-questions-grid {
+    grid-template-columns: 1fr;
+    gap: 7px;
+  }
+
+  .ai-chat-questions button,
+  .ai-chat-questions button.advisor-option-card {
+    flex: none;
+    min-height: 40px;
+    padding: 8px 11px;
+    font-size: 0.78rem;
+    scroll-snap-align: unset;
+  }
+
+  .ai-chat-register-action {
+    padding: 0 14px 10px;
+  }
+
+  .ai-chat-register-action .advisor-register-cta {
+    min-height: 50px;
+  }
+}
