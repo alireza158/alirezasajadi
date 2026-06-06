@@ -270,18 +270,17 @@ if (heroVisual && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
   });
 }
 
-const ADVISOR_WELCOME_MESSAGE =
-  "سلام 👋 من مشاور هوشمند دوره آموزش طراحی سایت با هوش مصنوعی هستم. می‌تونم کمکت کنم بفهمی این دوره برای هدفت مناسبه یا نه، چه چیزهایی یاد می‌گیری و چطور می‌تونی با کمک هوش مصنوعی سایت و وب‌اپ قابل ارائه بسازی. دوست داری از کدوم بخش شروع کنیم؟";
-
-const ADVISOR_INTENT_MESSAGES = {
-  consultation: "سلام، می‌خوام قبل از ثبت‌نام راهنمایی بگیرم.",
-  register: "سلام، می‌خوام درباره ثبت‌نام دوره بدونم.",
-  start: "سلام، می‌خوام بدونم از کجا باید یادگیری طراحی سایت با هوش مصنوعی رو شروع کنم.",
-  course: "سلام، می‌خوام دوره رو ببینم و بفهمم برای هدفم مناسبه یا نه.",
+const ADVISOR_HINT_MESSAGES = {
+  consultation: "سلام 👋 خوش اومدی. هر سوالی درباره دوره داری بپرس، من راهنمایی‌ات می‌کنم.",
+  register: "سلام 👋 اگر آماده ثبت‌نامی، دکمه «الان ثبت‌نام کنید» پایین چت فرم ثبت‌نام رو باز می‌کنه. اگر سوالی داری همین‌جا بپرس.",
+  start: "سلام 🌱 خوش اومدی. درباره شروع یادگیری طراحی سایت با هوش مصنوعی هر سوالی داری بپرس.",
+  course: "سلام 👋 اگر می‌خوای ببینی این دوره برای هدفت مناسبه، سوالت رو بنویس یا یکی از سوالات پیشنهادی رو انتخاب کن.",
+  general: "سلام 👋 خوش اومدی. هر سوالی درباره دوره داری بپرس، من راهنمایی‌ات می‌کنم.",
 };
-const DEFAULT_ADVISOR_INTENT = "consultation";
+const DEFAULT_ADVISOR_INTENT = "general";
 const ADVISOR_LEAD_STORAGE_KEY = "advisorLeadData";
-const ADVISOR_SESSION_STORAGE_KEY = "advisorSessionId";
+const ADVISOR_SESSION_STORAGE_KEY = "ai_advisor_session_id";
+const LEGACY_ADVISOR_SESSION_STORAGE_KEY = "advisorSessionId";
 
 const quickQuestions = [
   "این دوره برای مبتدی‌ها مناسبه؟",
@@ -296,7 +295,7 @@ function normalizeAdvisorIntent(intent) {
   }
 
   const normalizedIntent = String(intent).trim().toLowerCase();
-  return ADVISOR_INTENT_MESSAGES[normalizedIntent]
+  return ADVISOR_HINT_MESSAGES[normalizedIntent]
     ? normalizedIntent
     : DEFAULT_ADVISOR_INTENT;
 }
@@ -314,11 +313,12 @@ function saveAdvisorLeadData(data) {
 }
 
 function getAdvisorSessionId() {
-  let sessionId = localStorage.getItem(ADVISOR_SESSION_STORAGE_KEY);
+  let sessionId = localStorage.getItem(ADVISOR_SESSION_STORAGE_KEY) || localStorage.getItem(LEGACY_ADVISOR_SESSION_STORAGE_KEY);
   if (!sessionId) {
     sessionId = `chat-${Date.now()}-${Math.random().toString(16).slice(2)}`;
-    localStorage.setItem(ADVISOR_SESSION_STORAGE_KEY, sessionId);
   }
+  localStorage.setItem(ADVISOR_SESSION_STORAGE_KEY, sessionId);
+  localStorage.removeItem(LEGACY_ADVISOR_SESSION_STORAGE_KEY);
   return sessionId;
 }
 
@@ -333,11 +333,9 @@ function trackEvent(payload) {
 
 function trackLead(source = "register-form", extra = {}) {
   const data = { ...readAdvisorLeadData(), ...extra };
-  if (source === "chat" && !data.phone) {
-    return Promise.resolve();
-  }
   return trackEvent({
     type: "lead",
+    session_id: getAdvisorSessionId(),
     source,
     name: data.name || "",
     phone: data.phone || "",
@@ -345,20 +343,49 @@ function trackLead(source = "register-form", extra = {}) {
     level: data.level || "",
     goal: data.goal || "",
     intent: data.intent || "general",
+    status: data.status || "new",
+    follow_status: data.follow_status || data.status || "new",
   });
 }
 
-function trackChatMessage(role, content, extra = {}) {
+function saveChatMessage(role, content, extra = {}) {
   const data = { ...readAdvisorLeadData(), ...extra };
-  return trackEvent({
-    type: "chat_message",
+  const payload = {
+    type: extra.messageType || "message",
+    message_id: extra.messageId || `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`,
     session_id: getAdvisorSessionId(),
     role,
     content,
     user_name: data.name || "",
     user_phone: data.phone || "",
     intent: data.intent || "general",
-  });
+  };
+
+  return fetch("/api/save-chat-message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  })
+    .then((response) => {
+      if (response.ok) return response;
+      throw new Error("node-save-unavailable");
+    })
+    .catch(() =>
+      fetch("save-chat-message.php", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+        keepalive: true,
+      }),
+    )
+    .catch(() =>
+      trackEvent({
+        ...payload,
+        type: "chat_message",
+      }),
+    )
+    .catch(() => {});
 }
 
 function createAiConsultantChat() {
@@ -412,7 +439,7 @@ function createAiConsultantChat() {
   let currentIntent = DEFAULT_ADVISOR_INTENT;
   let leadData = readAdvisorLeadData();
   let lastFocusedElement = null;
-  let hasWelcomed = false;
+  const shownHints = new Set();
   let isWaitingForApi = false;
   const chatHistory = [];
 
@@ -463,8 +490,12 @@ function createAiConsultantChat() {
       }
     }
 
-    if (!options.skipTrack) {
-      trackChatMessage(role, text, { intent: currentIntent });
+    if (options.persist !== false) {
+      saveChatMessage(role, text, {
+        intent: currentIntent,
+        messageType: options.messageType || "message",
+        messageId: options.messageId,
+      });
     }
     return message;
   }
@@ -588,26 +619,27 @@ function createAiConsultantChat() {
     }
   }
 
-  function ensureWelcome() {
-    if (hasWelcomed) {
+  function showAdvisorHint(intent = DEFAULT_ADVISOR_INTENT) {
+    const normalizedIntent = normalizeAdvisorIntent(intent);
+    if (shownHints.has(normalizedIntent)) {
       return;
     }
-    appendMessage("assistant", ADVISOR_WELCOME_MESSAGE);
-    hasWelcomed = true;
+    const hint = ADVISOR_HINT_MESSAGES[normalizedIntent] || ADVISOR_HINT_MESSAGES.general;
+    appendMessage("assistant", hint, {
+      skipHistory: true,
+      messageType: "hint",
+      messageId: `hint-${getAdvisorSessionId()}-${normalizedIntent}`,
+    });
+    shownHints.add(normalizedIntent);
   }
 
   window.openAdvisorPopup = function openAdvisorPopup(intent = DEFAULT_ADVISOR_INTENT) {
     currentIntent = normalizeAdvisorIntent(intent);
     leadData = { ...readAdvisorLeadData(), intent: currentIntent };
     saveAdvisorLeadData(leadData);
-    ensureWelcome();
     renderQuickQuestions();
     setOpen(true);
-
-    const intentMessage = ADVISOR_INTENT_MESSAGES[currentIntent];
-    if (intentMessage) {
-      sendAdvisorMessage(intentMessage);
-    }
+    showAdvisorHint(currentIntent);
   };
 
   window.closeAdvisorPopup = function closeAdvisorPopup() {
@@ -632,7 +664,7 @@ function createAiConsultantChat() {
       return;
     }
 
-    document.querySelector("[data-open-register], [data-register-course]")?.click();
+    window.openRegisterModal?.();
   });
 
   document.addEventListener("keydown", (event) => {
@@ -663,7 +695,6 @@ function createAiConsultantChat() {
     }
   });
 
-  ensureWelcome();
   renderQuickQuestions();
 }
 
@@ -768,6 +799,7 @@ function initCourseRegistration() {
     modal.setAttribute("aria-hidden", "false");
     document.documentElement.classList.add("register-open");
     document.body.classList.add("register-open");
+    trackLead("register-form", { ...readAdvisorLeadData(), intent: "register" });
     focusFirstEmptyField();
   }
 
@@ -828,6 +860,7 @@ function initCourseRegistration() {
 
     try {
       const formData = new FormData(form);
+      formData.set("session_id", getAdvisorSessionId());
       const response = await fetch("payment.php", {
         method: "POST",
         body: formData,

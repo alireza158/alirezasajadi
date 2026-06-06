@@ -235,15 +235,22 @@ function upsert_lead(array $data): array
     $leads = read_leads();
     $phone = normalize_mobile((string) ($data['phone'] ?? ''));
     $email = clean_text($data['email'] ?? '', 180);
+    $sessionId = clean_text($data['session_id'] ?? '', 140);
     $now = gmdate('c');
     $index = -1;
     foreach ($leads as $i => $lead) {
-        if (($phone !== '' && ($lead['phone'] ?? '') === $phone) || ($phone === '' && $email !== '' && ($lead['email'] ?? '') === $email)) {
+        if (
+            ($phone !== '' && ($lead['phone'] ?? '') === $phone) ||
+            ($phone === '' && $email !== '' && ($lead['email'] ?? '') === $email) ||
+            ($phone === '' && $email === '' && $sessionId !== '' && ($lead['session_id'] ?? '') === $sessionId)
+        ) {
             $index = $i;
             break;
         }
     }
+    $status = clean_text($data['status'] ?? ($data['follow_status'] ?? 'new'), 50);
     $payload = [
+        'session_id' => $sessionId,
         'name' => clean_text($data['name'] ?? '', 160),
         'phone' => $phone,
         'email' => $email,
@@ -251,7 +258,8 @@ function upsert_lead(array $data): array
         'goal' => clean_text($data['goal'] ?? '', 500),
         'source' => clean_text($data['source'] ?? 'register-form', 80),
         'intent' => clean_text($data['intent'] ?? 'general', 80),
-        'follow_status' => clean_text($data['follow_status'] ?? 'new', 50),
+        'status' => $status,
+        'follow_status' => $status,
     ];
     if ($index < 0) {
         $lead = array_merge([
@@ -268,11 +276,111 @@ function upsert_lead(array $data): array
                 $lead[$key] = $value;
             }
         }
+        $lead['status'] = $lead['follow_status'] ?? ($lead['status'] ?? 'new');
         $lead['updated_at'] = $now;
         $leads[$index] = $lead;
     }
     write_leads($leads);
     return $lead;
+}
+
+function extract_mobile_from_text(string $content): string
+{
+    $normalized = normalize_digits($content);
+    if (preg_match('/(?:\+98|0098|98|0)?9\d{9}/', $normalized, $matches)) {
+        return normalize_mobile($matches[0]);
+    }
+    return '';
+}
+
+function append_chat_message(array $data): array
+{
+    $sessionId = clean_text($data['session_id'] ?? '', 140);
+    if ($sessionId === '') {
+        throw new InvalidArgumentException('session_id is required.');
+    }
+    $role = clean_text($data['role'] ?? 'user', 20);
+    $role = in_array($role, ['user', 'assistant'], true) ? $role : 'user';
+    $content = clean_text($data['content'] ?? '', 1600);
+    if ($content === '') {
+        throw new InvalidArgumentException('content is required.');
+    }
+    $intent = clean_text($data['intent'] ?? 'general', 80);
+    $messageId = clean_text($data['message_id'] ?? '', 160);
+    $type = clean_text($data['type'] ?? 'message', 40);
+    $now = gmdate('c');
+    $name = clean_text($data['user_name'] ?? '', 160);
+    $phone = normalize_mobile((string) ($data['user_phone'] ?? '')) ?: extract_mobile_from_text($content);
+
+    $chats = read_chats();
+    $index = -1;
+    foreach ($chats as $i => $chat) {
+        if (($chat['session_id'] ?? '') === $sessionId) {
+            $index = $i;
+            break;
+        }
+    }
+
+    $message = [
+        'id' => $messageId !== '' ? $messageId : 'msg-' . bin2hex(random_bytes(8)),
+        'role' => $role,
+        'type' => $type,
+        'content' => $content,
+        'created_at' => $now,
+        'intent' => $intent,
+    ];
+
+    if ($index < 0) {
+        $chat = [
+            'session_id' => $sessionId,
+            'intent' => $intent,
+            'status' => 'open',
+            'user_name' => $name,
+            'user_phone' => $phone,
+            'messages' => [$message],
+            'first_message_at' => $now,
+            'started_at' => $now,
+            'last_message_at' => $now,
+            'admin_note' => '',
+        ];
+        $chats[] = $chat;
+    } else {
+        $chat = $chats[$index];
+        $messages = is_array($chat['messages'] ?? null) ? $chat['messages'] : [];
+        foreach ($messages as $existing) {
+            if (($existing['id'] ?? '') !== '' && ($existing['id'] ?? '') === $message['id']) {
+                return $chat;
+            }
+        }
+        $last = end($messages);
+        if (is_array($last) && ($last['role'] ?? '') === $role && ($last['content'] ?? '') === $content && ($last['type'] ?? 'message') === $type) {
+            return $chat;
+        }
+        $messages[] = $message;
+        $chat['messages'] = $messages;
+        $chat['intent'] = clean_text($chat['intent'] ?? $intent, 80) ?: $intent;
+        if (empty($chat['first_message_at'])) $chat['first_message_at'] = $now;
+        if (empty($chat['started_at'])) $chat['started_at'] = $chat['first_message_at'];
+        $chat['last_message_at'] = $now;
+        if ($name !== '') $chat['user_name'] = $name;
+        if ($phone !== '') $chat['user_phone'] = $phone;
+        $chat['status'] = $chat['status'] ?? 'open';
+        $chat['admin_note'] = $chat['admin_note'] ?? '';
+        $chats[$index] = $chat;
+    }
+
+    write_chats($chats);
+    if ($phone !== '' || $name !== '') {
+        upsert_lead([
+            'session_id' => $sessionId,
+            'name' => $name,
+            'phone' => $phone,
+            'source' => 'chat',
+            'intent' => $intent,
+            'status' => 'new',
+        ]);
+    }
+    return $index < 0 ? end($chats) : $chats[$index];
 }
 
 function mark_lead_converted(string $phone): void
@@ -285,6 +393,7 @@ function mark_lead_converted(string $phone): void
     foreach ($leads as &$lead) {
         if (($lead['phone'] ?? '') === $phone) {
             $lead['follow_status'] = 'converted';
+            $lead['status'] = 'converted';
             $lead['updated_at'] = gmdate('c');
         }
     }
@@ -310,6 +419,16 @@ function extract_last_user_message(array $chat): string
         }
     }
     return '';
+}
+
+function extract_last_message(array $chat): array
+{
+    $messages = $chat['messages'] ?? [];
+    if (!is_array($messages) || !$messages) {
+        return [];
+    }
+    $last = end($messages);
+    return is_array($last) ? $last : [];
 }
 
 function chat_message_count(array $chat): int
