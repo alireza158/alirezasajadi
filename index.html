@@ -76,7 +76,7 @@
         <div class="nav-links" data-nav-links>
           <a href="#home">خانه</a><a href="#path">مسیر یادگیری</a
           ><a href="#projects">پروژه‌ها</a><a href="#curriculum">سرفصل‌ها</a
-          ><a href="#instructor">درباره مدرس</a><a href="#faq">سوالات متداول</a>
+          ><a href="#instructor">درباره مدرس</a><a href="#course-register">خرید دوره</a><a href="#faq">سوالات متداول</a>
         </div>
         <a
           class="btn btn-small btn-primary nav-cta"
@@ -345,10 +345,65 @@
             <a class="btn btn-light" href="#curriculum" aria-label="شروع یادگیری" data-open-advisor data-advisor-intent="start"
               >شروع یادگیری</a
             >
-            <a class="btn btn-ghost" href="#start" aria-label="ثبت‌نام در دوره" data-open-advisor data-advisor-intent="register"
+            <a class="btn btn-ghost" href="#course-register" aria-label="ثبت‌نام در دوره" data-open-register data-register-course
               >ثبت‌نام در دوره</a
             >
           </div>
+        </div>
+      </section>
+
+
+      <section class="section course-purchase" id="course-register">
+        <div class="container course-purchase-grid">
+          <div class="course-purchase-copy reveal">
+            <span class="eyebrow">ثبت‌نام دوره</span>
+            <h2>ثبت‌نام در دوره آموزش طراحی سایت با هوش مصنوعی</h2>
+            <p class="lead">
+              یک مسیر عملی برای ساخت سایت و وب‌اپ قابل ارائه با کمک هوش مصنوعی؛
+              مناسب افرادی که می‌خواهند سریع‌تر از ایده به پروژه واقعی برسند.
+            </p>
+            <p>
+              در این دوره یاد می‌گیری چطور با کمک هوش مصنوعی و ابزار مخصوص دوره،
+              ایده‌ات را به یک سایت واقعی تبدیل کنی؛ از طراحی ظاهر صفحات تا ساخت
+              منطق سایت، فرم‌ها، دیتابیس، پنل مدیریت و فرآیندهای سمت سرور.
+            </p>
+            <div class="course-feature-grid" aria-label="امکانات دوره">
+              <span>آموزش ساده و مرحله‌به‌مرحله</span>
+              <span>شروع از نصب ابزارها و ساخت اولین صفحه</span>
+              <span>ساخت صفحات حرفه‌ای با کمک هوش مصنوعی</span>
+              <span>طراحی سایت واکنش‌گرا برای موبایل و دسکتاپ</span>
+              <span>ساخت سایت کامل‌تر با فرانت‌اند و بک‌اند</span>
+              <span>ساخت فرم‌ها، ثبت اطلاعات و فرآیند خرید</span>
+              <span>آشنایی با ساخت وب‌اپ و نرم‌افزار تحت وب</span>
+              <span>آماده‌سازی خروجی قابل ارائه</span>
+              <span>مناسب برای ساخت نمونه‌کار اولیه و پروژه واقعی</span>
+            </div>
+          </div>
+
+          <aside class="course-price-card reveal" aria-label="کارت قیمت دوره">
+            <div class="discount-badge">تخفیف ویژه ثبت‌نام</div>
+            <p class="course-type">آنلاین، پروژه‌محور و مرحله‌به‌مرحله</p>
+            <h3>آموزش طراحی سایت با هوش مصنوعی</h3>
+            <p class="teacher">مدرس: علی‌رضا سجادی</p>
+            <div class="price-box">
+              <span class="old-price">۹,۸۵۰,۰۰۰ تومان</span>
+              <strong>۵,۵۰۰,۰۰۰ تومان</strong>
+              <small>مبلغ پرداختی نهایی دوره</small>
+            </div>
+            <ul class="course-summary-list">
+              <li>دسترسی آنلاین به مسیر عملی دوره</li>
+              <li>تمرکز روی ساخت خروجی قابل ارائه</li>
+              <li>مناسب شروع جدی، نمونه‌کار و پروژه واقعی</li>
+            </ul>
+            <div class="purchase-actions">
+              <button class="btn btn-primary btn-register" type="button" data-open-register data-register-course>
+                الان ثبت‌نام کنید
+              </button>
+              <button class="btn btn-ghost btn-consult" type="button" data-open-advisor data-advisor-intent="consultation">
+                مشاوره رایگان قبل از خرید
+              </button>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -423,6 +478,106 @@
         </div>
       </section>
     </main>
+
+
+    <div class="register-modal" data-register-modal aria-hidden="true">
+      <div class="register-backdrop" data-close-register></div>
+      <div
+        class="register-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="register-title"
+        aria-describedby="register-description"
+      >
+        <button class="register-close" type="button" aria-label="بستن فرم ثبت‌نام" data-close-register>×</button>
+        <div class="register-layout">
+          <form class="register-form" data-register-form novalidate>
+            <span class="eyebrow">خرید دوره</span>
+            <h2 id="register-title">ثبت‌نام و خرید دوره</h2>
+            <p id="register-description">
+              اطلاعاتت رو وارد کن تا ثبت‌نام اولیه انجام بشه و وارد مرحله پرداخت بشی.
+            </p>
+            <input type="hidden" name="course" value="آموزش طراحی سایت با هوش مصنوعی" />
+            <input type="hidden" name="amount" value="55000000" />
+
+            <label class="form-field">
+              <span>نام و نام خانوادگی <b>*</b></span>
+              <input type="text" name="name" autocomplete="name" required placeholder="مثلاً علی محمدی" />
+              <small data-error-for="name"></small>
+            </label>
+
+            <label class="form-field">
+              <span>شماره موبایل <b>*</b></span>
+              <input type="tel" name="phone" inputmode="tel" autocomplete="tel" required placeholder="مثلاً 09123456789" />
+              <small data-error-for="phone"></small>
+            </label>
+
+            <label class="form-field">
+              <span>ایمیل</span>
+              <input type="email" name="email" autocomplete="email" placeholder="اختیاری" />
+              <small data-error-for="email"></small>
+            </label>
+
+            <label class="form-field">
+              <span>سطح آشنایی با طراحی سایت</span>
+              <select name="level">
+                <option value="">انتخاب کنید</option>
+                <option>کاملاً مبتدی هستم</option>
+                <option>کمی HTML/CSS بلدم</option>
+                <option>قبلاً سایت ساختم</option>
+                <option>صاحب کسب‌وکارم</option>
+                <option>قصد دارم فریلنسری را شروع کنم</option>
+              </select>
+            </label>
+
+            <label class="form-field">
+              <span>هدف از شرکت در دوره</span>
+              <select name="goal">
+                <option value="">انتخاب کنید</option>
+                <option>یادگیری طراحی سایت از صفر</option>
+                <option>ساخت سایت برای کسب‌وکار خودم</option>
+                <option>ساخت نمونه‌کار</option>
+                <option>شروع فریلنسری</option>
+                <option>ساخت سایت با هوش مصنوعی</option>
+                <option>ساخت وب‌اپ و نرم‌افزار تحت وب</option>
+              </select>
+            </label>
+
+            <label class="form-field full">
+              <span>توضیحات بیشتر</span>
+              <textarea name="note" rows="4" placeholder="اگر سوال یا توضیحی داری اینجا بنویس..."></textarea>
+            </label>
+
+            <div class="form-alert" data-register-message aria-live="polite"></div>
+            <div class="register-buttons">
+              <button class="btn btn-primary" type="submit" data-submit-register>
+                ادامه و پرداخت ۵,۵۰۰,۰۰۰ تومان
+              </button>
+              <button class="btn btn-ghost" type="button" data-back-to-advisor>
+                بازگشت به مشاوره
+              </button>
+            </div>
+          </form>
+
+          <aside class="register-summary" aria-label="خلاصه دوره و قیمت">
+            <span class="discount-badge">ظرفیت محدود</span>
+            <h3>آموزش طراحی سایت با هوش مصنوعی</h3>
+            <p>مدرس: علی‌رضا سجادی</p>
+            <p>آنلاین، پروژه‌محور و مرحله‌به‌مرحله</p>
+            <div class="price-box compact">
+              <span class="old-price">۹,۸۵۰,۰۰۰ تومان</span>
+              <strong>۵,۵۰۰,۰۰۰ تومان</strong>
+              <small>مبلغ درگاه: 55,000,000 ریال</small>
+            </div>
+            <ul class="course-summary-list">
+              <li>ساخت صفحات، فرم‌ها و منطق سایت</li>
+              <li>آشنایی با بک‌اند، دیتابیس و سمت سرور</li>
+              <li>خروجی مناسب نمونه‌کار اولیه و پروژه واقعی</li>
+            </ul>
+          </aside>
+        </div>
+      </div>
+    </div>
 
     <footer class="footer">
       <div class="container footer-grid">

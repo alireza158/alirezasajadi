@@ -470,10 +470,11 @@ function createAiConsultantChat() {
       formData.set("phone", $("input[name='phone']", wrapper).value.trim());
       leadData = { ...leadData, name: formData.get("name"), phone: formData.get("phone") };
       saveAdvisorLeadData(leadData);
-      appendMessage(
-        "assistant",
-        "ثبت اولیه انجام شد ✅ برای ادامه پرداخت، همین بخش ثبت‌نام سایت به‌زودی به درگاه متصل می‌شود. اطلاعاتت برای پیگیری مشاور ذخیره شد.",
-      );
+      if (typeof window.openRegisterModal === "function") {
+        window.openRegisterModal();
+        return;
+      }
+      appendMessage("assistant", "اطلاعاتت برای تکمیل ثبت‌نام ذخیره شد.");
     });
   }
 
@@ -485,6 +486,10 @@ function createAiConsultantChat() {
     button.textContent = "الان ثبت‌نام کنید";
     button.addEventListener("click", () => {
       questionsRoot.innerHTML = "";
+      if (typeof window.openRegisterModal === "function") {
+        window.openRegisterModal();
+        return;
+      }
       appendRegistrationForm();
     });
     questionsRoot.append(button);
@@ -642,3 +647,225 @@ function createAiConsultantChat() {
 }
 
 createAiConsultantChat();
+
+function initCourseRegistration() {
+  const modal = $(`[data-register-modal]`);
+  const form = $(`[data-register-form]`);
+
+  if (!modal || !form) {
+    return;
+  }
+
+  const REGISTER_STORAGE_KEY = "courseRegistrationData";
+  const submitButton = $(`[data-submit-register]`, form);
+  const messageBox = $(`[data-register-message]`, form);
+  let lastFocusedElement = null;
+
+  function normalizePersianDigits(value = "") {
+    const persianDigits = "۰۱۲۳۴۵۶۷۸۹";
+    const arabicDigits = "٠١٢٣٤٥٦٧٨٩";
+    return String(value).replace(/[۰-۹٠-٩]/g, (digit) => {
+      const persianIndex = persianDigits.indexOf(digit);
+      return persianIndex > -1 ? String(persianIndex) : String(arabicDigits.indexOf(digit));
+    });
+  }
+
+  function normalizePhone(value = "") {
+    return normalizePersianDigits(value).replace(/[\s\-.()]/g, "");
+  }
+
+  function isValidIranPhone(value = "") {
+    return /^(?:\+98|98|0)?9\d{9}$/.test(normalizePhone(value));
+  }
+
+  function readJsonStorage(key) {
+    try {
+      return JSON.parse(localStorage.getItem(key) || "{}") || {};
+    } catch (error) {
+      return {};
+    }
+  }
+
+  function setMessage(text = "", type = "") {
+    messageBox.textContent = text;
+    messageBox.className = `form-alert${text ? " show" : ""}${type ? ` ${type}` : ""}`;
+  }
+
+  function setFieldError(name, text = "") {
+    const field = form.elements[name];
+    const wrapper = field?.closest(".form-field");
+    const error = $(`[data-error-for="${name}"]`, form);
+
+    wrapper?.classList.toggle("invalid", Boolean(text));
+    if (error) {
+      error.textContent = text;
+    }
+  }
+
+  function clearErrors() {
+    ["name", "phone", "email"].forEach((name) => setFieldError(name));
+    setMessage();
+  }
+
+  function getFormValues() {
+    return Object.fromEntries(new FormData(form).entries());
+  }
+
+  function saveRegistrationData() {
+    const values = getFormValues();
+    localStorage.setItem(REGISTER_STORAGE_KEY, JSON.stringify(values));
+    saveAdvisorLeadData({ ...readAdvisorLeadData(), ...values, intent: "register" });
+  }
+
+  function prefillForm() {
+    const savedRegistration = readJsonStorage(REGISTER_STORAGE_KEY);
+    const advisorLead = readAdvisorLeadData();
+    const data = { ...savedRegistration, ...advisorLead };
+
+    ["name", "phone", "email", "level", "goal", "note"].forEach((name) => {
+      const field = form.elements[name];
+      if (field && data[name]) {
+        field.value = data[name];
+      }
+    });
+  }
+
+  function focusFirstEmptyField() {
+    const emptyField = ["name", "phone", "email", "level", "goal", "note"]
+      .map((name) => form.elements[name])
+      .find((field) => field && !String(field.value || "").trim());
+    const target = emptyField || form.elements.name;
+    setTimeout(() => target?.focus({ preventScroll: true }), 80);
+  }
+
+  function openRegisterModal() {
+    lastFocusedElement = document.activeElement;
+    if (typeof window.closeAdvisorPopup === "function") {
+      window.closeAdvisorPopup();
+    }
+    prefillForm();
+    clearErrors();
+    modal.classList.add("open");
+    modal.setAttribute("aria-hidden", "false");
+    document.documentElement.classList.add("register-open");
+    document.body.classList.add("register-open");
+    focusFirstEmptyField();
+  }
+
+  function closeRegisterModal({ restoreFocus = true } = {}) {
+    modal.classList.remove("open");
+    modal.setAttribute("aria-hidden", "true");
+    document.documentElement.classList.remove("register-open");
+    document.body.classList.remove("register-open");
+
+    if (restoreFocus && lastFocusedElement && typeof lastFocusedElement.focus === "function") {
+      lastFocusedElement.focus({ preventScroll: true });
+    }
+  }
+
+  function validateForm() {
+    clearErrors();
+    let isValid = true;
+
+    if (!form.elements.name.value.trim()) {
+      setFieldError("name", "نام و نام خانوادگی را وارد کن.");
+      isValid = false;
+    }
+
+    if (!form.elements.phone.value.trim()) {
+      setFieldError("phone", "شماره موبایل را وارد کن.");
+      isValid = false;
+    } else if (!isValidIranPhone(form.elements.phone.value)) {
+      setFieldError("phone", "شماره موبایل ایران را درست وارد کن.");
+      isValid = false;
+    }
+
+    if (form.elements.email.value.trim() && !form.elements.email.validity.valid) {
+      setFieldError("email", "ایمیل را درست وارد کن.");
+      isValid = false;
+    }
+
+    if (!isValid) {
+      setMessage("لطفاً خطاهای فرم را برطرف کن.", "error");
+      const firstInvalid = $(".form-field.invalid input, .form-field.invalid select, .form-field.invalid textarea", form);
+      firstInvalid?.focus({ preventScroll: true });
+    }
+
+    return isValid;
+  }
+
+  async function submitRegistration(event) {
+    event.preventDefault();
+
+    if (!validateForm()) {
+      return;
+    }
+
+    saveRegistrationData();
+    const originalButtonText = submitButton.textContent;
+    submitButton.disabled = true;
+    submitButton.textContent = "در حال انتقال به پرداخت...";
+    setMessage("در حال ثبت اطلاعات و اتصال به درگاه پرداخت...");
+
+    try {
+      const formData = new FormData(form);
+      const response = await fetch("payment.php", {
+        method: "POST",
+        body: formData,
+      });
+      const result = await response.json();
+
+      if (result && result.error === false && result.url) {
+        window.location.href = result.url;
+        return;
+      }
+
+      setMessage(result?.message || "امکان انتقال به پرداخت فراهم نشد.", "error");
+    } catch (error) {
+      setMessage("ارتباط با پرداخت برقرار نشد. چند لحظه بعد دوباره تلاش کن.", "error");
+    } finally {
+      submitButton.disabled = false;
+      submitButton.textContent = originalButtonText;
+    }
+  }
+
+  window.openRegisterModal = openRegisterModal;
+  window.closeRegisterModal = closeRegisterModal;
+
+  document.addEventListener("click", (event) => {
+    const registerTrigger = event.target.closest("[data-open-register], [data-register-course]");
+    if (registerTrigger) {
+      event.preventDefault();
+      openRegisterModal();
+      return;
+    }
+
+    if (event.target.closest("[data-close-register]")) {
+      event.preventDefault();
+      closeRegisterModal();
+    }
+  });
+
+  $(`[data-back-to-advisor]`, form)?.addEventListener("click", () => {
+    closeRegisterModal({ restoreFocus: false });
+    if (typeof window.openAdvisorPopup === "function") {
+      window.openAdvisorPopup("consultation");
+    }
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && modal.classList.contains("open")) {
+      closeRegisterModal();
+    }
+  });
+
+  form.addEventListener("input", () => {
+    saveRegistrationData();
+  });
+  form.addEventListener("change", () => {
+    saveRegistrationData();
+  });
+  form.addEventListener("submit", submitRegistration);
+}
+
+initCourseRegistration();

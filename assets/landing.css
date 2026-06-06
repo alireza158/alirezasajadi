@@ -1695,3 +1695,360 @@ body.advisor-open {
     transition: none;
   }
 }
+
+/* Course purchase and registration modal */
+.course-purchase {
+  overflow: hidden;
+}
+.course-purchase::before {
+  content: "";
+  position: absolute;
+  inset: 8% -12% auto auto;
+  width: 420px;
+  height: 420px;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(249, 214, 92, 0.14), transparent 66%);
+  filter: blur(10px);
+  pointer-events: none;
+}
+.course-purchase-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(340px, 0.85fr);
+  gap: 28px;
+  align-items: start;
+}
+.course-purchase-copy {
+  border: 1px solid var(--border);
+  border-radius: 34px;
+  padding: clamp(24px, 4vw, 42px);
+  background:
+    radial-gradient(circle at 95% 12%, rgba(48, 232, 255, 0.15), transparent 28%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.09), rgba(255, 255, 255, 0.04));
+  box-shadow: var(--shadow);
+}
+.course-purchase-copy > p:not(.lead) {
+  color: var(--muted);
+  max-width: 790px;
+}
+.course-feature-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 24px;
+}
+.course-feature-grid span {
+  position: relative;
+  min-height: 54px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  border-radius: 18px;
+  padding: 12px 40px 12px 13px;
+  color: #e8f4ff;
+  background: rgba(255, 255, 255, 0.055);
+  font-size: 0.93rem;
+  line-height: 1.7;
+}
+.course-feature-grid span::before,
+.course-summary-list li::before {
+  content: "✓";
+  position: absolute;
+  right: 12px;
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  color: #06111f;
+  background: var(--cyan);
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+.course-price-card,
+.register-summary {
+  position: sticky;
+  top: 96px;
+  border: 1px solid rgba(48, 232, 255, 0.28);
+  border-radius: 32px;
+  padding: 24px;
+  background:
+    radial-gradient(circle at 18% 0%, rgba(48, 232, 255, 0.18), transparent 34%),
+    radial-gradient(circle at 100% 100%, rgba(244, 63, 139, 0.13), transparent 36%),
+    rgba(255, 255, 255, 0.075);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.3),
+    0 0 60px rgba(48, 232, 255, 0.09);
+  backdrop-filter: blur(22px);
+}
+.discount-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(249, 214, 92, 0.48);
+  border-radius: 999px;
+  padding: 7px 13px;
+  color: #211700;
+  background: linear-gradient(135deg, #f9d65c, #fff1a8);
+  box-shadow: 0 14px 30px rgba(249, 214, 92, 0.18);
+  font-size: 0.86rem;
+  font-weight: 950;
+}
+.course-type,
+.teacher,
+.register-summary p {
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+.price-box {
+  display: grid;
+  gap: 5px;
+  margin: 22px 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 24px;
+  padding: 18px;
+  background: rgba(0, 0, 0, 0.18);
+}
+.old-price {
+  color: rgba(216, 228, 245, 0.68);
+  text-decoration: line-through;
+  text-decoration-thickness: 2px;
+}
+.price-box strong {
+  color: #fff;
+  font-size: clamp(2rem, 4vw, 3.15rem);
+  line-height: 1.25;
+  letter-spacing: -0.045em;
+  text-shadow: 0 0 30px rgba(48, 232, 255, 0.22);
+}
+.price-box small {
+  color: #bff7ff;
+}
+.price-box.compact strong {
+  font-size: clamp(1.6rem, 3vw, 2.25rem);
+}
+.course-summary-list {
+  display: grid;
+  gap: 10px;
+  padding: 0;
+  margin: 0 0 22px;
+  list-style: none;
+}
+.course-summary-list li {
+  position: relative;
+  padding-right: 34px;
+  color: #dce9f8;
+  line-height: 1.8;
+}
+.course-summary-list li::before {
+  top: 5px;
+  right: 0;
+}
+.purchase-actions,
+.register-buttons {
+  display: grid;
+  gap: 10px;
+}
+.btn-register {
+  min-height: 58px;
+  font-size: 1.05rem;
+  box-shadow:
+    0 18px 46px rgba(48, 232, 255, 0.28),
+    0 0 34px rgba(139, 92, 246, 0.2);
+}
+.btn-consult {
+  width: 100%;
+}
+.register-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 1400;
+  display: grid;
+  place-items: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.24s ease;
+}
+.register-modal.open {
+  opacity: 1;
+  pointer-events: auto;
+}
+.register-backdrop {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 72% 18%, rgba(48, 232, 255, 0.14), transparent 30%),
+    rgba(3, 8, 19, 0.76);
+  backdrop-filter: blur(8px);
+}
+.register-dialog {
+  position: relative;
+  width: min(1060px, 100%);
+  max-height: min(820px, calc(100dvh - 40px));
+  overflow: auto;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 34px;
+  background:
+    radial-gradient(circle at 0% 0%, rgba(48, 232, 255, 0.12), transparent 30%),
+    linear-gradient(180deg, rgba(9, 24, 45, 0.98), rgba(4, 10, 22, 0.98));
+  box-shadow: 0 34px 110px rgba(0, 0, 0, 0.62);
+  transform: translateY(18px) scale(0.98);
+  transition: transform 0.24s ease;
+}
+.register-modal.open .register-dialog {
+  transform: translateY(0) scale(1);
+}
+.register-close {
+  position: sticky;
+  top: 14px;
+  z-index: 3;
+  float: left;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  margin: 14px 0 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 15px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.5rem;
+}
+.register-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(300px, 0.72fr);
+  gap: 22px;
+  padding: 26px;
+  clear: both;
+}
+.register-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+.register-form .eyebrow,
+.register-form h2,
+.register-form p,
+.form-field.full,
+.form-alert,
+.register-buttons {
+  grid-column: 1 / -1;
+}
+.register-form h2 {
+  margin-bottom: 0;
+}
+.register-form p {
+  color: var(--muted);
+  margin-bottom: 4px;
+}
+.form-field {
+  display: grid;
+  gap: 7px;
+  color: #dce9f8;
+  font-size: 0.92rem;
+  font-weight: 850;
+}
+.form-field b {
+  color: #f9d65c;
+}
+.form-field input,
+.form-field select,
+.form-field textarea {
+  width: 100%;
+  min-height: 50px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 17px;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+  outline: 0;
+  padding: 12px 13px;
+  font: inherit;
+  line-height: 1.55;
+  transition: 0.2s;
+}
+.form-field textarea {
+  resize: vertical;
+}
+.form-field select option {
+  color: #071427;
+}
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus {
+  border-color: rgba(48, 232, 255, 0.56);
+  box-shadow: 0 0 0 4px rgba(48, 232, 255, 0.1);
+}
+.form-field.invalid input,
+.form-field.invalid select,
+.form-field.invalid textarea {
+  border-color: rgba(255, 122, 170, 0.7);
+}
+.form-field small {
+  min-height: 20px;
+  color: #ff9cbe;
+  font-size: 0.78rem;
+  line-height: 1.6;
+}
+.form-alert {
+  display: none;
+  border: 1px solid rgba(48, 232, 255, 0.2);
+  border-radius: 16px;
+  padding: 11px 13px;
+  color: #dff8ff;
+  background: rgba(48, 232, 255, 0.08);
+}
+.form-alert.show {
+  display: block;
+}
+.form-alert.error {
+  border-color: rgba(255, 122, 170, 0.36);
+  color: #ffd5e3;
+  background: rgba(244, 63, 139, 0.11);
+}
+.register-summary {
+  position: static;
+  align-self: start;
+}
+html.register-open,
+body.register-open {
+  overflow: hidden;
+  overscroll-behavior: none;
+}
+[data-submit-register][disabled] {
+  cursor: wait;
+  opacity: 0.72;
+}
+@media (max-width: 1100px) {
+  .course-purchase-grid,
+  .register-layout {
+    grid-template-columns: 1fr;
+  }
+  .course-price-card {
+    position: relative;
+    top: auto;
+  }
+}
+@media (max-width: 760px) {
+  .course-purchase-copy,
+  .course-price-card,
+  .register-dialog {
+    border-radius: 26px;
+  }
+  .course-feature-grid,
+  .register-form {
+    grid-template-columns: 1fr;
+  }
+  .register-modal {
+    padding: 10px;
+  }
+  .register-dialog {
+    max-height: calc(100dvh - 20px);
+  }
+  .register-layout {
+    padding: 18px;
+  }
+  .register-buttons .btn,
+  .purchase-actions .btn {
+    width: 100%;
+  }
+}
