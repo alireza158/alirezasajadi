@@ -1161,7 +1161,7 @@ body.ai-chat-page-lock {
   position: fixed;
   right: 24px;
   bottom: 24px;
-  z-index: 1200;
+  z-index: 9000;
   width: min(460px, calc(100vw - 48px));
   max-width: 500px;
   direction: rtl;
@@ -1922,7 +1922,7 @@ body.advisor-open {
 .register-modal {
   position: fixed;
   inset: 0;
-  z-index: 1400;
+  z-index: 10000;
   display: grid;
   place-items: center;
   padding: 20px;
@@ -2073,7 +2073,9 @@ body.advisor-open {
   align-self: start;
 }
 html.register-open,
-body.register-open {
+body.register-open,
+html.register-modal-open,
+body.register-modal-open {
   overflow: hidden;
   overscroll-behavior: none;
 }
@@ -2199,7 +2201,9 @@ body.register-open {
   }
 }
 body.advisor-open.register-open,
-html.advisor-open.register-open {
+html.advisor-open.register-open,
+body.advisor-open.register-modal-open,
+html.advisor-open.register-modal-open {
   touch-action: auto;
 }
 
