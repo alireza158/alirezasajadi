@@ -282,6 +282,7 @@ const ADVISOR_INTENT_MESSAGES = {
 };
 const DEFAULT_ADVISOR_INTENT = "consultation";
 const ADVISOR_LEAD_STORAGE_KEY = "advisorLeadData";
+const ADVISOR_SESSION_STORAGE_KEY = "advisorSessionId";
 
 const advisorSteps = [
   {
@@ -342,6 +343,55 @@ function readAdvisorLeadData() {
 
 function saveAdvisorLeadData(data) {
   localStorage.setItem(ADVISOR_LEAD_STORAGE_KEY, JSON.stringify(data));
+}
+
+
+function getAdvisorSessionId() {
+  let sessionId = localStorage.getItem(ADVISOR_SESSION_STORAGE_KEY);
+  if (!sessionId) {
+    sessionId = `chat-${Date.now()}-${Math.random().toString(16).slice(2)}`;
+    localStorage.setItem(ADVISOR_SESSION_STORAGE_KEY, sessionId);
+  }
+  return sessionId;
+}
+
+function trackEvent(payload) {
+  return fetch("track.php", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+    keepalive: true,
+  }).catch(() => {});
+}
+
+function trackLead(source = "register-form", extra = {}) {
+  const data = { ...readAdvisorLeadData(), ...extra };
+  if (source === "chat" && !data.phone) {
+    return Promise.resolve();
+  }
+  return trackEvent({
+    type: "lead",
+    source,
+    name: data.name || "",
+    phone: data.phone || "",
+    email: data.email || "",
+    level: data.level || "",
+    goal: data.goal || "",
+    intent: data.intent || "general",
+  });
+}
+
+function trackChatMessage(role, content, extra = {}) {
+  const data = { ...readAdvisorLeadData(), ...extra };
+  return trackEvent({
+    type: "chat_message",
+    session_id: getAdvisorSessionId(),
+    role,
+    content,
+    user_name: data.name || "",
+    user_phone: data.phone || "",
+    intent: data.intent || "general",
+  });
 }
 
 function escapeAttribute(value = "") {
@@ -432,7 +482,7 @@ function createAiConsultantChat() {
     messagesRoot.scrollTo({ top: messagesRoot.scrollHeight, behavior: "smooth" });
   }
 
-  function appendMessage(role, text) {
+  function appendMessage(role, text, options = {}) {
     const message = document.createElement("div");
     message.className = `ai-chat-message ${role === "user" ? "user" : "assistant"}`;
 
@@ -441,6 +491,9 @@ function createAiConsultantChat() {
     message.append(bubble);
     messagesRoot.append(message);
     scrollMessagesToEnd();
+    if (!options.skipTrack) {
+      trackChatMessage(role, text, { intent: currentIntent });
+    }
     return message;
   }
 
@@ -470,6 +523,7 @@ function createAiConsultantChat() {
       formData.set("phone", $("input[name='phone']", wrapper).value.trim());
       leadData = { ...leadData, name: formData.get("name"), phone: formData.get("phone") };
       saveAdvisorLeadData(leadData);
+      trackLead("chat", leadData);
       if (typeof window.openRegisterModal === "function") {
         window.openRegisterModal();
         return;
@@ -567,6 +621,7 @@ function createAiConsultantChat() {
     appendMessage("user", answer);
     leadData = { ...leadData, intent: currentIntent, [step.key]: answer };
     saveAdvisorLeadData(leadData);
+    trackLead("chat", leadData);
     input.value = "";
     currentStepIndex += 1;
     questionsRoot.innerHTML = "";
@@ -715,6 +770,7 @@ function initCourseRegistration() {
     const values = getFormValues();
     localStorage.setItem(REGISTER_STORAGE_KEY, JSON.stringify(values));
     saveAdvisorLeadData({ ...readAdvisorLeadData(), ...values, intent: "register" });
+    trackLead("register-form", { ...values, intent: "register" });
   }
 
   function prefillForm() {
