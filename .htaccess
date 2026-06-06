@@ -1,0 +1,7 @@
+Options -Indexes
+<FilesMatch "\.(json)$">
+  Require all denied
+</FilesMatch>
+<FilesMatch "^(admin-config|layout)\.php$">
+  Require all denied
+</FilesMatch>
