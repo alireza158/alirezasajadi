@@ -2,7 +2,12 @@ const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
 const path = require("path");
-const fs = require("fs/promises");
+const fs = require("fs");
+const { promisify } = require("util");
+
+const readFile = promisify(fs.readFile);
+const writeFile = promisify(fs.writeFile);
+const mkdir = promisify(fs.mkdir);
 
 const rootDir = __dirname;
 const dataDir = path.join(rootDir, "data");
@@ -10,6 +15,17 @@ const chatsFile = path.join(dataDir, "chats.json");
 const leadsFile = path.join(dataDir, "leads.json");
 dotenv.config({ path: path.join(rootDir, ".env") });
 dotenv.config({ path: path.join(rootDir, ".env.local"), override: true });
+
+let fetchClient = global.fetch;
+if (!fetchClient) {
+  try {
+    fetchClient = require("node-fetch");
+  } catch (error) {
+    console.warn(
+      "No global fetch found. If your host runs Node.js 10/12/16, install node-fetch@2 inside ai-consultant.",
+    );
+  }
+}
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -180,7 +196,8 @@ const systemPrompt = `تو یک مشاور فروش حرفه‌ای، صمیمی
 نمونه دعوت به ثبت‌نام:
 «با توضیحاتی که دادی، این دوره می‌تونه برای شروع مسیرت مناسب باشه. اگر آماده‌ای، روی دکمه «الان ثبت‌نام کنید» بزن تا فرم ثبت‌نام باز بشه. اگر قبلش تماس انسانی می‌خوای، شماره موبایلت رو بفرست.»`;
 
-app.use(cors({ origin: process.env.CORS_ORIGIN || false }));
+const corsOrigin = process.env.CORS_ORIGIN || "https://alirezasajadi.ir";
+app.use(cors({ origin: corsOrigin }));
 app.use(express.json({ limit: "24kb" }));
 
 
@@ -202,8 +219,8 @@ function extractMobileFromText(content = "") {
 
 async function readJsonFile(file, fallback = []) {
   try {
-    await fs.mkdir(path.dirname(file), { recursive: true });
-    const content = await fs.readFile(file, "utf8");
+    await mkdir(path.dirname(file), { recursive: true });
+    const content = await readFile(file, "utf8");
     const parsed = JSON.parse(content || "[]");
     return Array.isArray(parsed) ? parsed : fallback;
   } catch (error) {
@@ -215,8 +232,8 @@ async function readJsonFile(file, fallback = []) {
 }
 
 async function writeJsonFile(file, data) {
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
+  await mkdir(path.dirname(file), { recursive: true });
+  await writeFile(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
 }
 
 function nextId(items) {
@@ -250,7 +267,12 @@ async function upsertLead(data) {
   if (index < 0) {
     leads.push({ id: nextId(leads), created_at: now, updated_at: now, admin_note: "", ...payload });
   } else {
-    leads[index] = { ...leads[index], ...Object.fromEntries(Object.entries(payload).filter(([, value]) => value !== "")), updated_at: now };
+    Object.keys(payload).forEach((key) => {
+      if (payload[key] !== "") {
+        leads[index][key] = payload[key];
+      }
+    });
+    leads[index].updated_at = now;
   }
   await writeJsonFile(leadsFile, leads);
 }
@@ -280,19 +302,19 @@ function normalizeHistory(history) {
 
 
 app.post("/api/save-chat-message", async (req, res) => {
-  const sessionId = cleanMessage(req.body?.session_id, 140);
-  const role = ["user", "assistant"].includes(req.body?.role) ? req.body.role : "user";
-  const content = cleanMessage(req.body?.content, 1600);
-  const intent = cleanMessage(req.body?.intent || "general", 80);
-  const type = cleanMessage(req.body?.type || "message", 40);
-  const messageId = cleanMessage(req.body?.message_id || `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`, 160);
+  const sessionId = cleanMessage((req.body && req.body.session_id), 140);
+  const role = ["user", "assistant"].includes((req.body && req.body.role)) ? req.body.role : "user";
+  const content = cleanMessage((req.body && req.body.content), 1600);
+  const intent = cleanMessage((req.body && req.body.intent) || "general", 80);
+  const type = cleanMessage((req.body && req.body.type) || "message", 40);
+  const messageId = cleanMessage((req.body && req.body.message_id) || `msg-${Date.now()}-${Math.random().toString(16).slice(2)}`, 160);
 
   if (!sessionId) return res.status(422).json({ error: true, message: "session_id is required." });
   if (!content) return res.status(422).json({ error: true, message: "content is required." });
 
   const now = new Date().toISOString();
-  const userName = cleanMessage(req.body?.user_name || "", 160);
-  const userPhone = normalizeMobile(req.body?.user_phone || "") || extractMobileFromText(content);
+  const userName = cleanMessage((req.body && req.body.user_name) || "", 160);
+  const userPhone = normalizeMobile((req.body && req.body.user_phone) || "") || extractMobileFromText(content);
   const chats = await readJsonFile(chatsFile, []);
   let chat = chats.find((item) => item.session_id === sessionId);
   const message = { id: messageId, role, type, content, created_at: now, intent };
@@ -314,17 +336,17 @@ app.post("/api/save-chat-message", async (req, res) => {
   } else {
     chat.messages = Array.isArray(chat.messages) ? chat.messages : [];
     const duplicateById = chat.messages.some((item) => item.id && item.id === message.id);
-    const last = chat.messages.at(-1);
+    const last = chat.messages[chat.messages.length - 1];
     const duplicateTail = last && last.role === role && last.content === content && (last.type || "message") === type;
     if (!duplicateById && !duplicateTail) {
       chat.messages.push(message);
       chat.last_message_at = now;
     }
-    chat.first_message_at ||= now;
-    chat.started_at ||= chat.first_message_at;
-    chat.intent ||= intent;
-    chat.status ||= "open";
-    chat.admin_note ||= "";
+    if (!chat.first_message_at) chat.first_message_at = now;
+    if (!chat.started_at) chat.started_at = chat.first_message_at;
+    if (!chat.intent) chat.intent = intent;
+    if (!chat.status) chat.status = "open";
+    if (!chat.admin_note) chat.admin_note = "";
     if (userName) chat.user_name = userName;
     if (userPhone) chat.user_phone = userPhone;
   }
@@ -337,8 +359,8 @@ app.post("/api/save-chat-message", async (req, res) => {
 });
 
 app.post("/api/ai-consultant", async (req, res) => {
-  const message = cleanMessage(req.body?.message);
-  const history = normalizeHistory(req.body?.history);
+  const message = cleanMessage((req.body && req.body.message));
+  const history = normalizeHistory((req.body && req.body.history));
 
   if (!message) {
     return res.status(400).json({ error: "لطفاً پیام خودت رو بنویس." });
@@ -346,17 +368,21 @@ app.post("/api/ai-consultant", async (req, res) => {
 
   const apiKey = process.env.GAPGPT_API_KEY;
   const baseUrl = process.env.GAPGPT_BASE_URL || "https://api.gapgpt.app/v1";
-  const model = process.env.GAPGPT_MODEL || "gpt-5.3-chat-latest";
+  const model = process.env.GAPGPT_MODEL || "gapgpt-qwen-3.6";
 
-  if (!apiKey || apiKey === "PUT_API_KEY_HERE") {
+  if (!apiKey || apiKey === "PUT_API_KEY_HERE" || apiKey === "YOUR_API_KEY_HERE") {
     return res.status(503).json({ error: fallbackErrorMessage });
   }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 30000);
+  if (!fetchClient) {
+    return res.status(500).json({ error: "وابستگی fetch روی سرویس Node.js نصب نیست. لطفاً برای Node.js قدیمی node-fetch@2 را نصب کنید." });
+  }
+
+  const controller = typeof AbortController !== "undefined" ? new AbortController() : null;
+  const timeout = controller ? setTimeout(() => controller.abort(), 30000) : null;
 
   try {
-    const response = await fetch(`${baseUrl.replace(/\/$/, "")}/chat/completions`, {
+    const requestOptions = {
       method: "POST",
       headers: {
         Authorization: `Bearer ${apiKey}`,
@@ -372,15 +398,19 @@ app.post("/api/ai-consultant", async (req, res) => {
         temperature: 0.6,
         max_tokens: 500,
       }),
-      signal: controller.signal,
-    });
+    };
+    if (controller) {
+      requestOptions.signal = controller.signal;
+    }
+
+    const response = await fetchClient(`${baseUrl.replace(/\/$/, "")}/chat/completions`, requestOptions);
 
     if (!response.ok) {
       return res.status(502).json({ error: fallbackErrorMessage });
     }
 
     const data = await response.json();
-    const answer = data?.choices?.[0]?.message?.content?.trim();
+    const answer = data && data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content && data.choices[0].message.content.trim();
 
     if (!answer) {
       return res.status(502).json({ error: fallbackErrorMessage });
@@ -390,11 +420,10 @@ app.post("/api/ai-consultant", async (req, res) => {
   } catch (error) {
     return res.status(502).json({ error: fallbackErrorMessage });
   } finally {
-    clearTimeout(timeout);
+    if (timeout) clearTimeout(timeout);
   }
 });
 
-app.use(express.static(rootDir));
 
 app.listen(port, () => {
   console.log(`AI consultant server is running on http://localhost:${port}`);
