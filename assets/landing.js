@@ -1,22 +1,224 @@
-const features=[['🧩','طراحی صفحات مدرن با HTML/CSS/JS'],['🎨','استفاده حرفه‌ای از ChatGPT برای طراحی UI'],['🚀','ساخت پروژه Laravel'],['🔗','اتصال پروژه به GitHub'],['🤖','کار با Codex برای توسعه پروژه'],['✨','اصلاح ظاهر صفحات با AI'],['🏪','ساخت لندینگ، سایت شرکتی و فروشگاهی'],['📝','پرامپت‌نویسی مخصوص طراحی سایت'],['🛠️','دیباگ و رفع خطاهای رایج'],['📦','آماده‌سازی پروژه برای ارائه واقعی']];
-const projects=[['لندینگ فروش محصول دیجیتال','یک صفحه فروش تمیز با CTA، بخش مزایا، اعتمادسازی و فرم جذب لید.',['HTML','CSS','ChatGPT']],['سایت شرکتی مدرن','ساختار حرفه‌ای برای معرفی خدمات، نمونه‌کار، درباره ما و تماس.',['UI','Responsive','AI']],['پنل ساده مدیریت/تیکت','تمرین ساخت تجربه کاربری داشبورد، لیست‌ها، وضعیت‌ها و فرم‌ها.',['JS','UX','Debug']],['پروژه Laravel متصل به GitHub و Codex','مدیریت نسخه، توسعه مرحله‌ای با Codex و آماده‌سازی برای ارائه.',['Laravel','GitHub','Codex']]];
-const audience=['کسانی که تازه می‌خواهند طراحی سایت را شروع کنند','صاحبان کسب‌وکار که می‌خواهند سایت خودشان را بسازند','طراحان سایتی که می‌خواهند سریع‌تر پروژه بزنند','تولیدکنندگان محتوا و مدرس‌ها','فریلنسرهایی که می‌خواهند خدمات طراحی سایت ارائه دهند'];
-const curriculum=[['فصل ۱: نصب ابزارها و آماده‌سازی','آماده‌سازی محیط کار، حساب‌ها، ابزارهای ضروری و ساختار ذهنی شروع پروژه.'],['فصل ۲: ساخت اولین صفحه سایت با ChatGPT','تبدیل ایده به ساختار صفحه، متن، وایرفریم و کد اولیه.'],['فصل ۳: اصول پرامپت‌نویسی برای طراحی سایت','نوشتن پرامپت‌های دقیق برای UI، کامپوننت، ریسپانسیو و اصلاحات.'],['فصل ۴: ساخت ظاهر حرفه‌ای و ریسپانسیو','بهبود رنگ، تایپوگرافی، فاصله‌گذاری، موبایل و تجربه کاربری.'],['فصل ۵: ساخت پروژه Laravel','ورود عملی به ساختار پروژه Laravel و اتصال بخش‌های اصلی.'],['فصل ۶: اتصال به GitHub','مدیریت نسخه، کامیت، برنچ و نگهداری پروژه به شکل حرفه‌ای.'],['فصل ۷: کار با Codex برای توسعه پروژه','استفاده از Codex برای ساخت، تغییر، ریفکتور و تست پروژه واقعی.'],['فصل ۸: اصلاح خطاها و بهبود UI','روش تحلیل ارورها، دادن کانتکست درست به AI و بهبود خروجی.'],['فصل ۹: آماده‌سازی پروژه نهایی','جمع‌بندی، تمیزکاری، چک‌لیست ارائه و ساخت نمونه‌کار اولیه.']];
-const results=['می‌توانی یک سایت واقعی بسازی','می‌توانی با AI پروژه را سریع‌تر جلو ببری','می‌توانی خطاها را بهتر تحلیل کنی','می‌توانی نمونه‌کار اولیه برای خودت بسازی','می‌توانی مسیر فریلنسری یا پروژه گرفتن را شروع کنی'];
-const testimonials=['قبل از این دوره فکر می‌کردم طراحی سایت خیلی سخت است؛ اما مسیر مرحله‌به‌مرحله باعث شد بالاخره خروجی قابل دیدن بسازم.','با کمک AI بالاخره توانستم از ایده به سایت واقعی برسم و فقط درگیر تماشای آموزش‌های پراکنده نمانم.','مسیر آموزش مرحله‌به‌مرحله بود و سردرگم نشدم؛ مخصوصاً بخش دیباگ و اصلاح با Codex برایم کاربردی بود.'];
-const faqs=[['آیا برای شروع باید برنامه‌نویسی بلد باشم؟','نه. مسیر برای مبتدی تا نیمه‌حرفه‌ای طراحی شده؛ اما مفاهیم پایه را همزمان با پروژه یاد می‌گیری.'],['آیا با موبایل هم می‌شود یاد گرفت؟','برای دیدن آموزش‌ها بله؛ اما برای ساخت پروژه واقعی بهتر است لپ‌تاپ یا کامپیوتر داشته باشی.'],['آیا پروژه واقعی ساخته می‌شود؟','بله، محور آموزش ساخت پروژه‌های واقعی مثل لندینگ، سایت شرکتی، پنل ساده و پروژه Laravel است.'],['آیا ChatGPT و Codex جای برنامه‌نویس را می‌گیرند؟','نه؛ این ابزارها دستیار حرفه‌ای تو هستند. یاد می‌گیری خروجی را هدایت، بررسی، اصلاح و مسئولانه استفاده کنی.'],['آیا این آموزش برای بازار کار مفید است؟','بله، چون تمرکز روی خروجی، نمونه‌کار، GitHub و مسیر پروژه‌محور است؛ همان چیزهایی که برای شروع جدی نیاز داری.'],['آیا سورس پروژه‌ها داده می‌شود؟','ساختار صفحه برای ارائه سورس پروژه‌ها آماده است و می‌توان فایل‌ها یا لینک GitHub را بعداً به آن متصل کرد.']];
-const $=(s,r=document)=>r.querySelector(s);const $$=(s,r=document)=>[...r.querySelectorAll(s)];
-function card(icon,title){return `<article class="glass-card"><span class="feature-icon">${icon}</span><h3>${title}</h3><p>با تمرین عملی و خروجی قابل استفاده، این مهارت را در پروژه واقعی تجربه می‌کنی.</p></article>`}
-$('[data-feature-grid]').innerHTML=features.map(f=>card(...f)).join('');
-$('[data-project-grid]').innerHTML=projects.map((p,i)=>`<article class="project-card"><div class="project-mock" aria-hidden="true"><span></span><span style="width:72%"></span><span style="width:58%"></span></div><h3>${p[0]}</h3><p>${p[1]}</p><div class="tags">${p[2].map(t=>`<span>${t}</span>`).join('')}</div><a class="link-btn" href="#curriculum">مشاهده مسیر ساخت ←</a></article>`).join('');
-$('[data-audience-grid]').innerHTML=audience.map((t,i)=>`<article class="glass-card"><span class="feature-icon">${i+1}</span><h3>${t}</h3></article>`).join('');
-$('[data-results-grid]').innerHTML=results.map((t,i)=>`<article class="glass-card"><span class="feature-icon">✓</span><h3>${t}</h3></article>`).join('');
-$('[data-testimonials]').innerHTML=testimonials.map((t,i)=>`<article class="glass-card"><div class="testimonial-avatar" aria-hidden="true"></div><p>«${t}»</p><strong>هنرجوی دوره ${i+1}</strong></article>`).join('');
-function accordion(items,root){root.innerHTML=items.map((it,i)=>`<article class="accordion-item ${i===0?'open':''}"><button class="accordion-button" type="button" aria-expanded="${i===0}">${it[0]}<span aria-hidden="true">+</span></button><div class="accordion-panel"><div><p>${it[1]}</p></div></div></article>`).join('')}
-accordion(curriculum,$('[data-accordion]'));accordion(faqs,$('[data-faq]'));
-$$('.accordion-button').forEach(btn=>btn.addEventListener('click',()=>{const item=btn.closest('.accordion-item');const open=item.classList.toggle('open');btn.setAttribute('aria-expanded',open)}));
-const header=$('[data-header]'),progress=$('.scroll-progress'),toggle=$('[data-menu-toggle]'),links=$('[data-nav-links]');
-function onScroll(){const max=document.documentElement.scrollHeight-innerHeight;progress.style.transform=`scaleX(${max?scrollY/max:0})`;header.classList.toggle('scrolled',scrollY>20)}onScroll();addEventListener('scroll',onScroll,{passive:true});
-toggle.addEventListener('click',()=>{const open=links.classList.toggle('open');toggle.setAttribute('aria-expanded',open)});$$('.nav-links a').forEach(a=>a.addEventListener('click',()=>{links.classList.remove('open');toggle.setAttribute('aria-expanded','false')}));
-const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}}),{threshold:.14,rootMargin:'0px 0px -40px 0px'});$$('.reveal,.stagger').forEach(el=>observer.observe(el));
-const tilt=$('[data-tilt]');if(tilt&&!matchMedia('(prefers-reduced-motion: reduce)').matches){tilt.addEventListener('mousemove',e=>{const r=tilt.getBoundingClientRect();const x=(e.clientX-r.left)/r.width-.5;const y=(e.clientY-r.top)/r.height-.5;tilt.style.transform=`rotateY(${x*-5}deg) rotateX(${y*5}deg)`});tilt.addEventListener('mouseleave',()=>tilt.style.transform='')}
+const features = [
+  ['🧩', 'اصول ساخت صفحات حرفه‌ای وب'],
+  ['📝', 'پرامپت‌نویسی مخصوص طراحی سایت'],
+  ['💡', 'تبدیل ایده به صفحه واقعی'],
+  ['🎨', 'طراحی رابط کاربری مدرن'],
+  ['📱', 'ساخت صفحات واکنش‌گرا'],
+  ['✨', 'اصلاح ظاهر با کمک AI'],
+  ['🛠️', 'رفع خطاهای رایج'],
+  ['🗂️', 'مدیریت فایل‌ها و نسخه‌های پروژه'],
+  ['🚀', 'ساخت پروژه قابل ارائه'],
+  ['📦', 'آماده‌سازی نمونه‌کار'],
+];
+
+const projects = [
+  [
+    'لندینگ حرفه‌ای معرفی محصول',
+    'یک صفحه معرفی تمیز با پیام روشن، مزایا، اعتمادسازی و دعوت به اقدام حرفه‌ای.',
+    ['لندینگ', 'فروش', 'تبدیل'],
+  ],
+  [
+    'سایت شخصی یا آموزشی',
+    'ساختار مناسب برای معرفی تخصص، آموزش‌ها، نمونه‌کارها و مسیر ارتباط با مخاطب.',
+    ['برند شخصی', 'آموزش', 'اعتماد'],
+  ],
+  [
+    'صفحه فروش دوره یا خدمات',
+    'طراحی صفحه‌ای فروش‌محور با تمرکز روی نیاز مخاطب، مزیت‌ها و ثبت‌نام.',
+    ['فروش', 'CTA', 'محتوا'],
+  ],
+  [
+    'پروژه کامل‌تر با ساختار چندصفحه‌ای',
+    'تمرین ساخت یک تجربه کامل‌تر با چند صفحه، مسیر کاربر و خروجی قابل ارائه.',
+    ['چندصفحه‌ای', 'پروژه‌محور', 'نمونه‌کار'],
+  ],
+];
+
+const audience = [
+  'افراد مبتدی که می‌خواهند طراحی سایت را شروع کنند',
+  'صاحبان کسب‌وکار',
+  'تولیدکنندگان محتوا',
+  'مدرس‌ها',
+  'فریلنسرهای تازه‌کار',
+  'طراحانی که می‌خواهند سریع‌تر پروژه بسازند',
+];
+
+const curriculum = [
+  ['فصل ۱: شروع مسیر طراحی سایت با AI', 'آشنایی با ذهنیت پروژه‌محور، مسیر یادگیری و آماده‌سازی برای ساخت سایت واقعی.'],
+  ['فصل ۲: تبدیل ایده به ساختار سایت', 'تبدیل ایده خام به بخش‌های صفحه، پیام اصلی، ساختار محتوا و مسیر حرکت کاربر.'],
+  ['فصل ۳: پرامپت‌نویسی حرفه‌ای برای طراحی صفحات', 'یادگیری روش نوشتن درخواست‌های دقیق برای گرفتن خروجی کاربردی و قابل اصلاح.'],
+  ['فصل ۴: ساخت صفحه اصلی مدرن', 'ساخت یک صفحه اصلی حرفه‌ای با تمرکز روی چیدمان، پیام، دکمه‌ها و تجربه کاربری.'],
+  ['فصل ۵: حرفه‌ای‌سازی ظاهر و رنگ‌بندی', 'بهبود تایپوگرافی، رنگ، فاصله‌گذاری، کارت‌ها و حس بصری سایت.'],
+  ['فصل ۶: ریسپانسیو کردن صفحات', 'آماده‌سازی ظاهر سایت برای موبایل، تبلت و دسکتاپ با تجربه کاربری تمیز.'],
+  ['فصل ۷: رفع خطاها با کمک دستیار هوشمند', 'تشخیص خطا، توضیح درست مشکل و اصلاح مرحله‌به‌مرحله بدون سردرگمی.'],
+  ['فصل ۸: ساخت پروژه چندبخشی', 'ترکیب چند صفحه و بخش کاربردی برای ساخت خروجی کامل‌تر و قابل ارائه.'],
+  ['فصل ۹: آماده‌سازی خروجی نهایی و نمونه‌کار', 'مرتب‌سازی فایل‌ها، کنترل کیفیت نهایی و آماده‌سازی پروژه برای نمایش به دیگران.'],
+];
+
+const results = [
+  'می‌توانی یک سایت واقعی بسازی',
+  'می‌توانی با AI پروژه را سریع‌تر جلو ببری',
+  'می‌توانی خطاها را بهتر تحلیل کنی',
+  'می‌توانی نمونه‌کار اولیه برای خودت بسازی',
+  'می‌توانی مسیر فریلنسری یا پروژه گرفتن را شروع کنی',
+];
+
+const testimonials = [
+  'قبل از این دوره فکر می‌کردم طراحی سایت خیلی سخت است؛ اما مسیر مرحله‌به‌مرحله باعث شد بالاخره خروجی قابل دیدن بسازم.',
+  'با کمک AI بالاخره توانستم از ایده به سایت واقعی برسم و فقط درگیر تماشای آموزش‌های پراکنده نمانم.',
+  'مسیر آموزش مرحله‌به‌مرحله بود و سردرگم نشدم؛ مخصوصاً بخش اصلاح خطاها با دستیار هوشمند برایم کاربردی بود.',
+];
+
+const faqs = [
+  ['آیا باید برنامه‌نویسی بلد باشم؟', 'نه. مسیر برای شروع طراحی شده و مفاهیم لازم را در جریان ساخت پروژه واقعی یاد می‌گیری.'],
+  ['آیا این آموزش فقط معرفی ابزار است؟', 'نه. تمرکز اصلی روی ساخت خروجی واقعی، تصمیم‌گیری درست و اصلاح مرحله‌به‌مرحله پروژه است.'],
+  ['آیا پروژه واقعی ساخته می‌شود؟', 'بله. در مسیر آموزش چند خروجی واقعی و قابل ارائه می‌سازی تا یادگیری فقط تئوری نباشد.'],
+  ['آیا هوش مصنوعی جای یادگیری را می‌گیرد؟', 'نه. هوش مصنوعی یک دستیار است؛ تو یاد می‌گیری چطور آن را هدایت کنی، خروجی را بفهمی و بهترش کنی.'],
+  ['آیا برای شروع طراحی سایت مناسب است؟', 'بله. اگر از مسیرهای پراکنده خسته شده‌ای، این آموزش یک مسیر ساده، عملی و نتیجه‌محور به تو می‌دهد.'],
+  ['آیا می‌توانم بعد از آموزش نمونه‌کار بسازم؟', 'بله. هدف نهایی این است که بتوانی از ایده به خروجی قابل نمایش و نمونه‌کار اولیه برسی.'],
+];
+
+const $ = (selector, root = document) => root.querySelector(selector);
+const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
+
+function createFeatureCard(icon, title) {
+  return `
+    <article class="glass-card">
+      <span class="feature-icon">${icon}</span>
+      <h3>${title}</h3>
+      <p>این مهارت را در جریان ساخت پروژه واقعی تمرین می‌کنی، نه فقط در حد تماشای آموزش.</p>
+    </article>
+  `;
+}
+
+$('[data-feature-grid]').innerHTML = features.map((feature) => createFeatureCard(...feature)).join('');
+
+$('[data-project-grid]').innerHTML = projects
+  .map(
+    (project) => `
+      <article class="project-card">
+        <div class="project-mock" aria-hidden="true">
+          <span></span><span style="width:72%"></span><span style="width:58%"></span>
+        </div>
+        <h3>${project[0]}</h3>
+        <p>${project[1]}</p>
+        <div class="tags">${project[2].map((tag) => `<span>${tag}</span>`).join('')}</div>
+        <a class="link-btn" href="#curriculum">مشاهده مسیر ساخت ←</a>
+      </article>
+    `,
+  )
+  .join('');
+
+$('[data-audience-grid]').innerHTML = audience
+  .map(
+    (item, index) => `
+      <article class="glass-card">
+        <span class="feature-icon">${index + 1}</span>
+        <h3>${item}</h3>
+      </article>
+    `,
+  )
+  .join('');
+
+$('[data-results-grid]').innerHTML = results
+  .map(
+    (item) => `
+      <article class="glass-card">
+        <span class="feature-icon">✓</span>
+        <h3>${item}</h3>
+      </article>
+    `,
+  )
+  .join('');
+
+$('[data-testimonials]').innerHTML = testimonials
+  .map(
+    (item, index) => `
+      <article class="glass-card">
+        <div class="testimonial-avatar" aria-hidden="true"></div>
+        <p>«${item}»</p>
+        <strong>هنرجوی دوره ${index + 1}</strong>
+      </article>
+    `,
+  )
+  .join('');
+
+function renderAccordion(items, root) {
+  root.innerHTML = items
+    .map(
+      (item, index) => `
+        <article class="accordion-item ${index === 0 ? 'open' : ''}">
+          <button class="accordion-button" type="button" aria-expanded="${index === 0}">
+            ${item[0]}<span aria-hidden="true">+</span>
+          </button>
+          <div class="accordion-panel"><div><p>${item[1]}</p></div></div>
+        </article>
+      `,
+    )
+    .join('');
+}
+
+renderAccordion(curriculum, $('[data-accordion]'));
+renderAccordion(faqs, $('[data-faq]'));
+
+$$('.accordion-button').forEach((button) => {
+  button.addEventListener('click', () => {
+    const item = button.closest('.accordion-item');
+    const isOpen = item.classList.toggle('open');
+    button.setAttribute('aria-expanded', isOpen);
+  });
+});
+
+const header = $('[data-header]');
+const progress = $('.scroll-progress');
+const menuToggle = $('[data-menu-toggle]');
+const navLinks = $('[data-nav-links]');
+
+function updateScrollState() {
+  const maxScroll = document.documentElement.scrollHeight - innerHeight;
+  progress.style.transform = `scaleX(${maxScroll ? scrollY / maxScroll : 0})`;
+  header.classList.toggle('scrolled', scrollY > 20);
+}
+
+updateScrollState();
+addEventListener('scroll', updateScrollState, { passive: true });
+
+menuToggle.addEventListener('click', () => {
+  const isOpen = navLinks.classList.toggle('open');
+  menuToggle.setAttribute('aria-expanded', isOpen);
+});
+
+$$('.nav-links a').forEach((link) => {
+  link.addEventListener('click', () => {
+    navLinks.classList.remove('open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+  });
+});
+
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.14, rootMargin: '0px 0px -40px 0px' },
+);
+
+$$('.reveal,.stagger').forEach((element) => revealObserver.observe(element));
+
+const heroVisual = $('[data-tilt]');
+if (heroVisual && !matchMedia('(prefers-reduced-motion: reduce)').matches) {
+  heroVisual.addEventListener('mousemove', (event) => {
+    const rect = heroVisual.getBoundingClientRect();
+    const x = (event.clientX - rect.left) / rect.width - 0.5;
+    const y = (event.clientY - rect.top) / rect.height - 0.5;
+    heroVisual.style.transform = `rotateY(${x * -5}deg) rotateX(${y * 5}deg)`;
+  });
+
+  heroVisual.addEventListener('mouseleave', () => {
+    heroVisual.style.transform = '';
+  });
+}
