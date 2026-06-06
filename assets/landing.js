@@ -270,56 +270,28 @@ if (heroVisual && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
   });
 }
 
+const ADVISOR_WELCOME_MESSAGE =
+  "سلام 👋 من مشاور هوشمند دوره آموزش طراحی سایت با هوش مصنوعی هستم. می‌تونم کمکت کنم بفهمی این دوره برای هدفت مناسبه یا نه، چه چیزهایی یاد می‌گیری و چطور می‌تونی با کمک هوش مصنوعی سایت و وب‌اپ قابل ارائه بسازی. دوست داری از کدوم بخش شروع کنیم؟";
+
 const ADVISOR_INTENT_MESSAGES = {
-  consultation:
-    "سلام 👋 برای مشاوره رایگان دوره چند سوال کوتاه ازت می‌پرسم تا بهتر راهنمایی‌ات کنم.",
-  register:
-    "سلام 👋 عالیه! برای ثبت‌نام دوره اول چند اطلاعات کوتاه ازت می‌گیرم، بعد می‌تونی وارد مرحله پرداخت بشی.",
-  start:
-    "سلام 👋 خوش اومدی. برای اینکه ببینیم این دوره برای شروع یادگیری طراحی سایت با هوش مصنوعی مناسبته، چند سوال کوتاه می‌پرسم.",
-  course:
-    "سلام 👋 برای اینکه بهتر راهنمایی‌ات کنم و ببینیم این دوره مناسب تو هست یا نه، چند سوال کوتاه می‌پرسم.",
+  consultation: "سلام، می‌خوام قبل از ثبت‌نام راهنمایی بگیرم.",
+  register: "سلام، می‌خوام درباره ثبت‌نام دوره بدونم.",
+  start: "سلام، می‌خوام بدونم از کجا باید یادگیری طراحی سایت با هوش مصنوعی رو شروع کنم.",
+  course: "سلام، می‌خوام دوره رو ببینم و بفهمم برای هدفم مناسبه یا نه.",
 };
 const DEFAULT_ADVISOR_INTENT = "consultation";
 const ADVISOR_LEAD_STORAGE_KEY = "advisorLeadData";
 const ADVISOR_SESSION_STORAGE_KEY = "advisorSessionId";
 
-const advisorSteps = [
-  {
-    key: "name",
-    question: "اسمت چیه؟",
-    placeholder: "نامت رو بنویس...",
-    type: "text",
-  },
-  {
-    key: "phone",
-    question: "شماره موبایلت رو وارد می‌کنی؟",
-    placeholder: "مثلاً 09123456789",
-    type: "phone",
-  },
-  {
-    key: "level",
-    question: "سطح آشنایی‌ات با طراحی سایت چقدره؟",
-    type: "choice",
-    options: [
-      "کاملاً مبتدی هستم",
-      "کمی HTML/CSS بلدم",
-      "قبلاً سایت ساختم",
-      "صاحب کسب‌وکارم و می‌خوام سایت خودم رو بسازم",
-    ],
-  },
-  {
-    key: "goal",
-    question: "هدفت از شرکت در دوره چیه؟",
-    type: "choice",
-    options: [
-      "یادگیری طراحی سایت از صفر",
-      "ساخت سایت برای کسب‌وکار خودم",
-      "شروع فریلنسری",
-      "ساخت نمونه‌کار",
-      "آشنایی با ساخت سایت با هوش مصنوعی",
-    ],
-  },
+const quickQuestions = [
+  "این دوره برای من که مبتدی هستم مناسبه؟",
+  "بعد از دوره دقیقاً چه چیزهایی می‌تونم بسازم؟",
+  "آیا می‌تونم سایت کامل با فرانت‌اند و بک‌اند بسازم؟",
+  "آیا برای کسب‌وکار خودم می‌تونم سایت بسازم؟",
+  "این دوره فقط آموزش ابزارهاست یا پروژه واقعی هم داریم؟",
+  "قیمت دوره و شرایط ثبت‌نام چیه؟",
+  "فرق این دوره با آموزش‌های معمولی طراحی سایت چیه؟",
+  "اگر برنامه‌نویسی بلد نباشم می‌تونم شروع کنم؟",
 ];
 
 function normalizeAdvisorIntent(intent) {
@@ -344,7 +316,6 @@ function readAdvisorLeadData() {
 function saveAdvisorLeadData(data) {
   localStorage.setItem(ADVISOR_LEAD_STORAGE_KEY, JSON.stringify(data));
 }
-
 
 function getAdvisorSessionId() {
   let sessionId = localStorage.getItem(ADVISOR_SESSION_STORAGE_KEY);
@@ -394,14 +365,6 @@ function trackChatMessage(role, content, extra = {}) {
   });
 }
 
-function escapeAttribute(value = "") {
-  return String(value)
-    .replace(/&/g, "&amp;")
-    .replace(/"/g, "&quot;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;");
-}
-
 function createAiConsultantChat() {
   const widget = document.createElement("section");
   widget.className = "ai-chat-widget";
@@ -417,14 +380,17 @@ function createAiConsultantChat() {
         <div>
           <span class="ai-chat-kicker">AI Course Advisor</span>
           <strong>مشاور هوشمند خرید دوره</strong>
-          <p>کوتاه، فارسی و دقیق راهنمایی‌ات می‌کنم.</p>
+          <p>آزادانه سوالت رو بپرس؛ اگر آماده بودی ثبت‌نام هم همین‌جاست.</p>
         </div>
         <button class="ai-chat-close" type="button" aria-label="بستن چت">×</button>
       </header>
       <div class="ai-chat-messages" aria-live="polite" tabindex="0"></div>
-      <div class="ai-chat-questions" aria-label="گزینه‌های پاسخ"></div>
+      <div class="ai-chat-questions" aria-label="سوالات آماده مشاوره"></div>
+      <div class="ai-chat-actions">
+        <button class="advisor-register-cta" type="button">الان ثبت‌نام کنید</button>
+      </div>
       <form class="ai-chat-form">
-        <input class="ai-chat-input" type="text" inputmode="text" autocomplete="off" maxlength="900" placeholder="پاسخت رو بنویس..." aria-label="پیام چت" />
+        <input class="ai-chat-input" type="text" inputmode="text" autocomplete="off" maxlength="900" placeholder="هر سوالی داری بنویس..." aria-label="پیام چت" />
         <button class="ai-chat-send" type="submit">ارسال</button>
       </form>
     </div>
@@ -438,14 +404,17 @@ function createAiConsultantChat() {
   const panel = $(".ai-chat-panel", widget);
   const messagesRoot = $(".ai-chat-messages", widget);
   const questionsRoot = $(".ai-chat-questions", widget);
+  const registerCta = $(".advisor-register-cta", widget);
   const form = $(".ai-chat-form", widget);
   const input = $(".ai-chat-input", widget);
+  const sendButton = $(".ai-chat-send", widget);
 
   let currentIntent = DEFAULT_ADVISOR_INTENT;
-  let currentStepIndex = 0;
   let leadData = readAdvisorLeadData();
-  let flowCompleted = false;
   let lastFocusedElement = null;
+  let hasWelcomed = false;
+  let isWaitingForApi = false;
+  const chatHistory = [];
 
   function focusAdvisorInput() {
     setTimeout(() => input.focus({ preventScroll: true }), 180);
@@ -473,11 +442,6 @@ function createAiConsultantChat() {
     }
   }
 
-  function clearConversation() {
-    messagesRoot.innerHTML = "";
-    questionsRoot.innerHTML = "";
-  }
-
   function scrollMessagesToEnd() {
     messagesRoot.scrollTo({ top: messagesRoot.scrollHeight, behavior: "smooth" });
   }
@@ -491,167 +455,158 @@ function createAiConsultantChat() {
     message.append(bubble);
     messagesRoot.append(message);
     scrollMessagesToEnd();
+
+    if (!options.skipHistory) {
+      chatHistory.push({ role: role === "user" ? "user" : "assistant", content: text });
+      if (chatHistory.length > 12) {
+        chatHistory.splice(0, chatHistory.length - 12);
+      }
+    }
+
     if (!options.skipTrack) {
       trackChatMessage(role, text, { intent: currentIntent });
     }
     return message;
   }
 
-  function appendRegistrationForm() {
-    const wrapper = document.createElement("div");
-    wrapper.className = "ai-chat-registration";
-    wrapper.innerHTML = `
-      <strong>فرم سریع ثبت‌نام</strong>
-      <label>
-        نام و نام خانوادگی
-        <input type="text" name="name" autocomplete="name" value="${escapeAttribute(leadData.name)}" />
-      </label>
-      <label>
-        شماره موبایل
-        <input type="tel" name="phone" inputmode="tel" autocomplete="tel" value="${escapeAttribute(leadData.phone)}" />
-      </label>
-      <button type="button" class="ai-chat-pay-button">ادامه ثبت‌نام و پرداخت</button>
-      <small>اطلاعاتت فقط برای تکمیل ثبت‌نام و تماس مشاور ذخیره می‌شود.</small>
-    `;
-
-    messagesRoot.append(wrapper);
+  function appendTyping() {
+    const typing = document.createElement("div");
+    typing.className = "ai-chat-message assistant typing";
+    typing.innerHTML = `<p><span></span><span></span><span></span></p>`;
+    messagesRoot.append(typing);
     scrollMessagesToEnd();
-
-    $(".ai-chat-pay-button", wrapper).addEventListener("click", () => {
-      const formData = new FormData();
-      formData.set("name", $("input[name='name']", wrapper).value.trim());
-      formData.set("phone", $("input[name='phone']", wrapper).value.trim());
-      leadData = { ...leadData, name: formData.get("name"), phone: formData.get("phone") };
-      saveAdvisorLeadData(leadData);
-      trackLead("chat", leadData);
-      if (typeof window.openRegisterModal === "function") {
-        window.openRegisterModal();
-        return;
-      }
-      appendMessage("assistant", "اطلاعاتت برای تکمیل ثبت‌نام ذخیره شد.");
-    });
+    return typing;
   }
 
-  function showRegistrationCta() {
+  function renderQuickQuestions() {
     questionsRoot.innerHTML = "";
-    const button = document.createElement("button");
-    button.type = "button";
-    button.className = "advisor-register-cta";
-    button.textContent = "الان ثبت‌نام کنید";
-    button.addEventListener("click", () => {
-      questionsRoot.innerHTML = "";
-      if (typeof window.openRegisterModal === "function") {
-        window.openRegisterModal();
-        return;
-      }
-      appendRegistrationForm();
-    });
-    questionsRoot.append(button);
-  }
-
-  function renderChoiceOptions(step) {
-    questionsRoot.innerHTML = "";
-    if (step.type !== "choice") {
-      return;
-    }
-
-    step.options.forEach((option) => {
+    quickQuestions.forEach((question) => {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "advisor-option-card";
-      button.textContent = option;
-      button.addEventListener("click", () => handleAdvisorAnswer(option));
+      button.textContent = question;
+      button.addEventListener("click", () => sendAdvisorMessage(question));
       questionsRoot.append(button);
     });
   }
 
-  function askCurrentStep() {
-    const step = advisorSteps[currentStepIndex];
-
-    if (!step) {
-      flowCompleted = true;
-      appendMessage(
-        "assistant",
-        "خیلی خوبه. با توجه به جواب‌هات، این دوره می‌تونه برای شروع مسیر ساخت سایت با هوش مصنوعی مناسب باشه.",
-      );
-      input.placeholder = "اگر سوال دیگری داری همین‌جا بنویس...";
-      input.inputMode = "text";
-      input.disabled = false;
-      showRegistrationCta();
-      return;
-    }
-
-    appendMessage("assistant", step.question);
-    input.placeholder = step.placeholder || "یکی از گزینه‌ها رو انتخاب کن...";
-    input.inputMode = step.type === "phone" ? "tel" : "text";
-    input.disabled = step.type === "choice";
-    renderChoiceOptions(step);
-    focusAdvisorInput();
+  function setWaiting(waiting) {
+    isWaitingForApi = waiting;
+    input.disabled = waiting;
+    sendButton.disabled = waiting;
+    questionsRoot.querySelectorAll("button").forEach((button) => {
+      button.disabled = waiting;
+    });
   }
 
-  function isValidPhone(text) {
-    const normalized = text.replace(/[۰-۹]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹".indexOf(digit));
-    return /^(?:\+?98|0)?9\d{9}$/.test(normalized.replace(/[\s\-.()]/g, ""));
+  function normalizePersianDigits(text = "") {
+    return String(text).replace(/[۰-۹٠-٩]/g, (digit) => "۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩".indexOf(digit) % 10);
   }
 
-  function handleAdvisorAnswer(rawAnswer) {
-    const answer = rawAnswer.trim();
-    const step = advisorSteps[currentStepIndex];
+  function updateLeadDataFromMessage(message) {
+    const normalized = normalizePersianDigits(message);
+    const phoneMatch = normalized.match(/(?:\+?98|0)?9\d{9}/);
+    const updates = {};
 
-    if (!answer) {
+    if (phoneMatch) {
+      updates.phone = phoneMatch[0].startsWith("0") ? phoneMatch[0] : `0${phoneMatch[0].replace(/^(?:\+?98)/, "")}`;
+    }
+
+    const nameMatch = message.match(/(?:اسمم|نامم|من\s+)([آ-یA-Za-z][آ-یA-Za-z\s‌]{2,32})/);
+    if (nameMatch && !/میخوام|می‌خوام|هستم|دارم|بلدم/.test(nameMatch[1])) {
+      updates.name = nameMatch[1].trim();
+    }
+
+    if (/مبتدی|صفر|برنامه‌نویسی بلد نیستم|برنامه نویسی بلد نیستم/.test(message)) {
+      updates.level = "کاملاً مبتدی هستم";
+    }
+
+    if (/کسب‌وکار|کسب و کار|بیزینس|فروشگاه|سایت خودم/.test(message)) {
+      updates.goal = "ساخت سایت برای کسب‌وکار خودم";
+    }
+
+    if (Object.keys(updates).length) {
+      leadData = { ...leadData, ...updates, intent: currentIntent };
+      saveAdvisorLeadData(leadData);
+      if (updates.phone) {
+        trackLead("chat", leadData);
+      }
+    }
+  }
+
+  function shouldOfferRegister(message = "") {
+    return /قیمت|هزینه|ثبت.?نام|خرید|پرداخت|شهریه|تومان|شرایط/.test(message);
+  }
+
+  async function fetchAdvisorAnswer(message) {
+    const response = await fetch("/api/ai-consultant", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        message,
+        history: chatHistory.slice(0, -1),
+        intent: currentIntent,
+      }),
+    });
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok || result.error) {
+      throw new Error(result.error || "ارتباط با مشاور هوشمند برقرار نشد.");
+    }
+
+    return result.answer;
+  }
+
+  async function sendAdvisorMessage(rawMessage) {
+    const message = String(rawMessage || "").trim();
+    if (!message || isWaitingForApi) {
       return;
     }
 
-    if (flowCompleted) {
-      appendMessage("user", answer);
-      input.value = "";
-      appendMessage("assistant", "پیامت ثبت شد. برای نهایی‌کردن مسیر، روی دکمه «الان ثبت‌نام کنید» بزن یا همین گفتگو را ادامه بده تا مشاور پیگیری کند.");
-      return;
-    }
-
-    if (!step) {
-      return;
-    }
-
-    if (step.type === "phone" && !isValidPhone(answer)) {
-      appendMessage("assistant", "شماره موبایل را با فرمت درست وارد کن؛ مثلاً 09123456789");
-      return;
-    }
-
-    appendMessage("user", answer);
-    leadData = { ...leadData, intent: currentIntent, [step.key]: answer };
-    saveAdvisorLeadData(leadData);
-    trackLead("chat", leadData);
+    appendMessage("user", message);
+    updateLeadDataFromMessage(message);
     input.value = "";
-    currentStepIndex += 1;
-    questionsRoot.innerHTML = "";
-    askCurrentStep();
+    setWaiting(true);
+    const typing = appendTyping();
+
+    try {
+      const answer = await fetchAdvisorAnswer(message);
+      typing.remove();
+      appendMessage("assistant", answer);
+
+      if (shouldOfferRegister(message)) {
+        appendMessage("assistant", "اگر تصمیم گرفتی ثبت‌نام رو شروع کنی، دکمه «الان ثبت‌نام کنید» همین پایین همیشه در دسترسه.");
+      }
+    } catch (error) {
+      typing.remove();
+      appendMessage("assistant", error.message || "الان ارتباط با مشاور هوشمند برقرار نشد. لطفاً چند لحظه بعد دوباره سوالت رو بپرس.");
+    } finally {
+      setWaiting(false);
+      renderQuickQuestions();
+      focusAdvisorInput();
+    }
   }
 
-  function startAdvisorFlow(intent = DEFAULT_ADVISOR_INTENT) {
-    currentIntent = normalizeAdvisorIntent(intent);
-    currentStepIndex = 0;
-    flowCompleted = false;
-    leadData = { ...readAdvisorLeadData(), intent: currentIntent };
-    saveAdvisorLeadData(leadData);
-    clearConversation();
-    input.disabled = false;
-    input.value = "";
-    appendMessage("assistant", ADVISOR_INTENT_MESSAGES[currentIntent]);
-    askCurrentStep();
+  function ensureWelcome() {
+    if (hasWelcomed) {
+      return;
+    }
+    appendMessage("assistant", ADVISOR_WELCOME_MESSAGE);
+    hasWelcomed = true;
   }
 
   window.openAdvisorPopup = function openAdvisorPopup(intent = DEFAULT_ADVISOR_INTENT) {
-    const isAlreadyOpen = widget.classList.contains("open");
-
-    if (!isAlreadyOpen) {
-      startAdvisorFlow(intent);
-      setOpen(true);
-      return;
-    }
-
+    currentIntent = normalizeAdvisorIntent(intent);
+    leadData = { ...readAdvisorLeadData(), intent: currentIntent };
+    saveAdvisorLeadData(leadData);
+    ensureWelcome();
+    renderQuickQuestions();
     setOpen(true);
-    focusAdvisorInput();
+
+    const intentMessage = ADVISOR_INTENT_MESSAGES[currentIntent];
+    if (intentMessage) {
+      sendAdvisorMessage(intentMessage);
+    }
   };
 
   window.closeAdvisorPopup = function closeAdvisorPopup() {
@@ -670,14 +625,21 @@ function createAiConsultantChat() {
 
   closeButton.addEventListener("click", closeAdvisorPopup);
   backdrop.addEventListener("click", closeAdvisorPopup);
+  registerCta.addEventListener("click", () => {
+    if (typeof window.openRegisterModal === "function") {
+      window.openRegisterModal();
+    }
+  });
+
   document.addEventListener("keydown", (event) => {
     if (event.key === "Escape" && widget.classList.contains("open")) {
       closeAdvisorPopup();
     }
   });
+
   form.addEventListener("submit", (event) => {
     event.preventDefault();
-    handleAdvisorAnswer(input.value);
+    sendAdvisorMessage(input.value);
   });
 
   document.addEventListener("click", (event) => {
@@ -697,8 +659,8 @@ function createAiConsultantChat() {
     }
   });
 
-  appendMessage("assistant", ADVISOR_INTENT_MESSAGES[DEFAULT_ADVISOR_INTENT]);
-  appendMessage("assistant", "هر زمان آماده بودی روی یکی از دکمه‌های مشاوره یا ثبت‌نام بزن تا چند سوال کوتاه بپرسم.");
+  ensureWelcome();
+  renderQuickQuestions();
 }
 
 createAiConsultantChat();
@@ -796,9 +758,6 @@ function initCourseRegistration() {
 
   function openRegisterModal() {
     lastFocusedElement = document.activeElement;
-    if (typeof window.closeAdvisorPopup === "function") {
-      window.closeAdvisorPopup();
-    }
     prefillForm();
     clearErrors();
     modal.classList.add("open");
@@ -892,7 +851,11 @@ function initCourseRegistration() {
     const registerTrigger = event.target.closest("[data-open-register], [data-register-course]");
     if (registerTrigger) {
       event.preventDefault();
-      openRegisterModal();
+      if (typeof window.openAdvisorPopup === "function") {
+        window.openAdvisorPopup(registerTrigger.dataset.advisorIntent || "register");
+      } else {
+        openRegisterModal();
+      }
       return;
     }
 
