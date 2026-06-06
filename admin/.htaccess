@@ -1,4 +1,4 @@
 Options -Indexes
-<FilesMatch "admin-config\.php$|helpers\.php$">
+<FilesMatch "admin-config\.php$|admin-functions\.php$|layout\.php$">
   Require all denied
 </FilesMatch>

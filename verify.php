@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 require_once __DIR__ . '/admin/admin-config.php';
 
-const MERCHANT_ID = '0babc2f6-e2e7-43db-a75c-35ba6fb361a9';
 const ZARINPAL_VERIFY_URL = 'https://api.zarinpal.com/pg/v4/payment/verify.json';
 const SITE_URL = 'https://alirezasajadi.ir/';
 const COURSE_PRICE_TOMAN_LABEL = '۵,۵۰۰,۰۰۰ تومان';
@@ -94,7 +93,8 @@ if (strtoupper($status) !== 'OK') {
     write_orders($orders);
     render_result('fail', 'پرداخت ناموفق بود', $orders[$orderIndex]);
 }
-$verifyPayload = ['merchant_id' => MERCHANT_ID, 'amount' => (int) ($order['amount'] ?? 0), 'authority' => $authority];
+$settings = read_settings();
+$verifyPayload = ['merchant_id' => (string) ($settings['merchant_id'] ?? DEFAULT_SETTINGS['merchant_id']), 'amount' => (int) ($order['amount'] ?? 0), 'authority' => $authority];
 $verifyResponse = send_zarinpal_verify($verifyPayload);
 $code = (int) ($verifyResponse['data']['code'] ?? 0);
 $orders[$orderIndex]['zarinpal_response'] = $verifyResponse;

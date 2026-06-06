@@ -2,39 +2,79 @@
 declare(strict_types=1);
 require_once __DIR__ . '/layout.php';
 require_admin();
+
 $orders = read_orders();
 $leads = read_leads();
 $chats = read_chats();
-$paidOrders = array_filter($orders, fn($o) => ($o['status'] ?? '') === 'paid');
-$failedOrders = array_filter($orders, fn($o) => ($o['status'] ?? '') === 'failed');
-$pendingOrders = array_filter($orders, fn($o) => ($o['status'] ?? '') === 'pending');
-$revenue = array_sum(array_map(fn($o) => (int) ($o['amount'] ?? 0), $paidOrders));
-usort($orders, fn($a,$b) => strcmp((string)($b['created_at'] ?? ''), (string)($a['created_at'] ?? '')));
-usort($leads, fn($a,$b) => strcmp((string)($b['created_at'] ?? ''), (string)($a['created_at'] ?? '')));
-admin_header('داشبورد اصلی');
+$paidOrders = array_filter($orders, fn($order) => ($order['status'] ?? '') === 'paid');
+$failedOrders = array_filter($orders, fn($order) => ($order['status'] ?? '') === 'failed');
+$pendingOrders = array_filter($orders, fn($order) => ($order['status'] ?? '') === 'pending');
+$revenue = array_sum(array_map(fn($order) => (int) ($order['amount'] ?? 0), $paidOrders));
+$latestOrders = latest_items($orders, 6, 'created_at');
+$latestLeads = latest_items($leads, 6, 'created_at');
+
+admin_header('داشبورد');
 ?>
-<section class="grid stats">
-  <div class="card stat"><span>کل سفارش‌ها</span><strong><?= count($orders) ?></strong></div>
-  <div class="card stat"><span>پرداخت موفق</span><strong><?= count($paidOrders) ?></strong></div>
-  <div class="card stat"><span>پرداخت ناموفق</span><strong><?= count($failedOrders) ?></strong></div>
-  <div class="card stat"><span>سفارش pending</span><strong><?= count($pendingOrders) ?></strong></div>
-  <div class="card stat"><span>درآمد پرداخت‌شده</span><strong><?= e(format_toman($revenue)) ?></strong></div>
-  <div class="card stat"><span>تعداد Leadها</span><strong><?= count($leads) ?></strong></div>
-  <div class="card stat"><span>گفتگوهای چت‌بات</span><strong><?= count($chats) ?></strong></div>
-  <div class="card stat"><span>آخرین بروزرسانی</span><strong><?= e(gmdate('Y-m-d')) ?></strong></div>
+<section class="stats-grid mb-4">
+  <div class="stat-card"><span>کل سفارش‌ها</span><strong><?= e(count($orders)) ?></strong><i class="bi bi-receipt"></i></div>
+  <div class="stat-card success"><span>پرداخت موفق</span><strong><?= e(count($paidOrders)) ?></strong><i class="bi bi-check2-circle"></i></div>
+  <div class="stat-card danger"><span>پرداخت ناموفق</span><strong><?= e(count($failedOrders)) ?></strong><i class="bi bi-x-circle"></i></div>
+  <div class="stat-card warning"><span>در انتظار پرداخت</span><strong><?= e(count($pendingOrders)) ?></strong><i class="bi bi-hourglass-split"></i></div>
+  <div class="stat-card primary"><span>مجموع درآمد پرداخت‌شده</span><strong><?= e(format_toman($revenue)) ?></strong><i class="bi bi-cash-stack"></i></div>
+  <div class="stat-card"><span>تعداد لیدها</span><strong><?= e(count($leads)) ?></strong><i class="bi bi-people"></i></div>
+  <div class="stat-card"><span>گفتگوهای چت‌بات</span><strong><?= e(count($chats)) ?></strong><i class="bi bi-chat-dots"></i></div>
+  <div class="stat-card"><span>میانگین پیام هر گفتگو</span><strong><?= e(count($chats) ? round(array_sum(array_map('chat_message_count', $chats)) / count($chats), 1) : 0) ?></strong><i class="bi bi-bar-chart"></i></div>
 </section>
-<section class="panel">
-  <div class="panel-head"><h2>آخرین ثبت‌نام‌ها / Leadها</h2><a class="btn small ghost" href="leads.php">مشاهده همه</a></div>
-  <div class="table-wrap"><table><thead><tr><th>نام</th><th>موبایل</th><th>هدف</th><th>منبع</th><th>وضعیت</th><th>تاریخ</th></tr></thead><tbody>
-  <?php foreach (array_slice($leads, 0, 8) as $lead): ?><tr><td><?= e($lead['name'] ?? '-') ?></td><td><?= e($lead['phone'] ?? '-') ?></td><td><?= e($lead['goal'] ?? '-') ?></td><td><?= e($lead['source'] ?? '-') ?></td><td><span class="badge <?= e($lead['follow_status'] ?? 'new') ?>"><?= e($lead['follow_status'] ?? 'new') ?></span></td><td><?= e(format_datetime($lead['created_at'] ?? '')) ?></td></tr><?php endforeach; ?>
-  <?php if (!$leads): ?><tr><td colspan="6" class="empty">هنوز lead ثبت نشده است.</td></tr><?php endif; ?>
-  </tbody></table></div>
-</section>
-<section class="panel">
-  <div class="panel-head"><h2>آخرین پرداخت‌ها</h2><a class="btn small ghost" href="orders.php">مشاهده همه</a></div>
-  <div class="table-wrap"><table><thead><tr><th>کد پیگیری</th><th>نام</th><th>موبایل</th><th>مبلغ</th><th>وضعیت</th><th>ref_id</th><th>تاریخ پرداخت</th></tr></thead><tbody>
-  <?php foreach (array_slice($orders, 0, 8) as $order): ?><tr><td><?= e($order['tracking_code'] ?? '-') ?></td><td><?= e($order['name'] ?? '-') ?></td><td><?= e($order['phone'] ?? '-') ?></td><td><?= e(format_toman($order['amount'] ?? 0)) ?></td><td><span class="badge <?= e($order['status'] ?? 'pending') ?>"><?= e($order['status'] ?? 'pending') ?></span></td><td><?= e($order['ref_id'] ?? '-') ?></td><td><?= e(format_datetime($order['paid_at'] ?? '')) ?></td></tr><?php endforeach; ?>
-  <?php if (!$orders): ?><tr><td colspan="7" class="empty">هنوز سفارشی ثبت نشده است.</td></tr><?php endif; ?>
-  </tbody></table></div>
-</section>
+
+<div class="row g-4">
+  <div class="col-12 col-xl-7">
+    <section class="admin-card h-100">
+      <div class="section-head">
+        <h2>آخرین سفارش‌ها</h2>
+        <a href="orders.php">مشاهده همه</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle admin-table">
+          <thead><tr><th>کد پیگیری</th><th>نام</th><th>مبلغ</th><th>وضعیت</th><th>تاریخ</th></tr></thead>
+          <tbody>
+          <?php foreach ($latestOrders as $order): ?>
+            <tr>
+              <td class="ltr text-nowrap"><?= e($order['tracking_code'] ?? '-') ?></td>
+              <td><?= e($order['name'] ?? '-') ?></td>
+              <td><?= e(format_toman($order['amount'] ?? 0)) ?></td>
+              <td><?= render_status_badge((string) ($order['status'] ?? 'pending')) ?></td>
+              <td class="ltr text-nowrap"><?= e(format_datetime($order['created_at'] ?? '')) ?></td>
+            </tr>
+          <?php endforeach; ?>
+          <?php if (!$latestOrders): ?><tr><td colspan="5" class="empty-state">هنوز سفارشی ثبت نشده است.</td></tr><?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+  <div class="col-12 col-xl-5">
+    <section class="admin-card h-100">
+      <div class="section-head">
+        <h2>آخرین لیدها</h2>
+        <a href="leads.php">مشاهده همه</a>
+      </div>
+      <div class="table-responsive">
+        <table class="table align-middle admin-table">
+          <thead><tr><th>نام</th><th>موبایل</th><th>منبع</th><th>وضعیت</th></tr></thead>
+          <tbody>
+          <?php foreach ($latestLeads as $lead): ?>
+            <tr>
+              <td><?= e($lead['name'] ?? '-') ?></td>
+              <td class="ltr text-nowrap"><?= e($lead['phone'] ?? '-') ?></td>
+              <td><?= e($lead['source'] ?? '-') ?></td>
+              <td><?= render_status_badge((string) ($lead['follow_status'] ?? 'new')) ?></td>
+            </tr>
+          <?php endforeach; ?>
+          <?php if (!$latestLeads): ?><tr><td colspan="4" class="empty-state">هنوز لیدی ثبت نشده است.</td></tr><?php endif; ?>
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
 <?php admin_footer(); ?>
