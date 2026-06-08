@@ -999,3 +999,105 @@ function initCourseRegistration() {
 }
 
 initCourseRegistration();
+
+// Professional UI upgrades: accessible slider, active nav state, and back-to-top control.
+function initLearningSlider() {
+  const slider = $(`[data-slider]`);
+  if (!slider) return;
+
+  const track = $(`.slider-track`, slider);
+  const slides = $$(`.slide-card`, slider);
+  const prevButton = $(`[data-slider-prev]`, slider);
+  const nextButton = $(`[data-slider-next]`, slider);
+  const dotsRoot = $(`[data-slider-dots]`, slider);
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  let activeIndex = 0;
+  let autoTimer = null;
+
+  function renderDots() {
+    dotsRoot.innerHTML = slides
+      .map(
+        (_, index) =>
+          `<button type="button" aria-label="رفتن به اسلاید ${index + 1}" data-slide-dot="${index}"></button>`,
+      )
+      .join("");
+  }
+
+  function updateSlider(index) {
+    activeIndex = (index + slides.length) % slides.length;
+    track.style.transform = `translateX(${activeIndex * 100}%)`;
+    $$(`[data-slide-dot]`, dotsRoot).forEach((dot, dotIndex) => {
+      dot.classList.toggle("active", dotIndex === activeIndex);
+      dot.setAttribute("aria-current", dotIndex === activeIndex ? "true" : "false");
+    });
+  }
+
+  function queueAutoPlay() {
+    if (reduceMotion) return;
+    clearInterval(autoTimer);
+    autoTimer = setInterval(() => updateSlider(activeIndex + 1), 6200);
+  }
+
+  renderDots();
+  updateSlider(0);
+  queueAutoPlay();
+
+  prevButton.addEventListener("click", () => {
+    updateSlider(activeIndex - 1);
+    queueAutoPlay();
+  });
+  nextButton.addEventListener("click", () => {
+    updateSlider(activeIndex + 1);
+    queueAutoPlay();
+  });
+  dotsRoot.addEventListener("click", (event) => {
+    const dot = event.target.closest("[data-slide-dot]");
+    if (!dot) return;
+    updateSlider(Number(dot.dataset.slideDot));
+    queueAutoPlay();
+  });
+  slider.addEventListener("mouseenter", () => clearInterval(autoTimer));
+  slider.addEventListener("mouseleave", queueAutoPlay);
+}
+
+function initBackToTop() {
+  const backToTop = $(`[data-back-to-top]`);
+  if (!backToTop) return;
+
+  function updateBackToTop() {
+    backToTop.classList.toggle("visible", scrollY > 620);
+  }
+
+  updateBackToTop();
+  addEventListener("scroll", updateBackToTop, { passive: true });
+  backToTop.addEventListener("click", () => {
+    scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+function initActiveNavigation() {
+  const links = $$(".nav-links a[href^='#']");
+  const sections = links
+    .map((link) => $(link.getAttribute("href")))
+    .filter(Boolean);
+
+  if (!links.length || !sections.length) return;
+
+  const navObserver = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        links.forEach((link) => {
+          link.classList.toggle("active", link.getAttribute("href") === `#${entry.target.id}`);
+        });
+      });
+    },
+    { rootMargin: "-34% 0px -58% 0px", threshold: 0.01 },
+  );
+
+  sections.forEach((section) => navObserver.observe(section));
+}
+
+initLearningSlider();
+initBackToTop();
+initActiveNavigation();
