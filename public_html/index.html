@@ -75,7 +75,7 @@
         </button>
         <div class="nav-links" data-nav-links>
           <a href="#home">خانه</a><a href="#path">مسیر یادگیری</a
-          ><a href="#projects">پروژه‌ها</a><a href="#curriculum">سرفصل‌ها</a
+          ><a href="#projects">پروژه‌ها</a><a href="#experience">تجربه دوره</a><a href="#curriculum">سرفصل‌ها</a
           ><a href="#instructor">درباره مدرس</a><a href="#course-register">خرید دوره</a><a href="#faq">سوالات متداول</a>
         </div>
         <a
@@ -128,13 +128,20 @@
           </div>
           <div class="hero-visual reveal" data-tilt>
             <div class="orb"></div>
-            <img
-              src="./assets/instructor-hero-BtbWE4mA.jpg"
-              alt="علی‌رضا سجادی مدرس آموزش طراحی سایت با هوش مصنوعی"
-              width="640"
-              height="760"
-              fetchpriority="high"
-            />
+            <picture>
+              <source
+                srcset="./assets/instructor-hero-BtbWE4mA.jpg 640w"
+                sizes="(max-width: 720px) 86vw, (max-width: 1100px) 44vw, 520px"
+              />
+              <img
+                src="./assets/instructor-hero-BtbWE4mA.jpg"
+                alt="علی‌رضا سجادی مدرس آموزش طراحی سایت با هوش مصنوعی"
+                width="640"
+                height="760"
+                fetchpriority="high"
+                decoding="async"
+              />
+            </picture>
             <div class="float-card code-card">Idea → Page</div>
             <div class="float-card build-card">نمونه‌کار آماده</div>
             <div class="float-card smart-card">AI Assistant</div>
@@ -261,6 +268,63 @@
         </div>
       </section>
 
+
+
+      <section class="section experience-lab" id="experience" aria-label="تجربه تعاملی دوره">
+        <div class="container">
+          <div class="section-head center reveal">
+            <span class="eyebrow">تجربه حرفه‌ای دوره</span>
+            <h2>همه چیز برای ساخت یک خروجی چشم‌گیر، مرتب و قابل ارائه</h2>
+            <p>
+              این بخش‌ها نشان می‌دهند مسیر یادگیری فقط تئوری نیست؛ هر مرحله با
+              تمرین، بازخورد، اصلاح بصری و آماده‌سازی خروجی همراه است.
+            </p>
+          </div>
+          <div class="experience-grid reveal">
+            <article class="dashboard-card">
+              <div class="dashboard-top">
+                <span></span><span></span><span></span>
+              </div>
+              <div class="dashboard-metric">
+                <strong>۹ گام</strong>
+                <small>نقشه راه عملی از ایده تا نمونه‌کار</small>
+              </div>
+              <div class="dashboard-bars" aria-hidden="true">
+                <span style="--w: 92%"></span>
+                <span style="--w: 76%"></span>
+                <span style="--w: 64%"></span>
+              </div>
+            </article>
+            <div class="learning-slider" data-slider>
+              <div class="slider-viewport">
+                <div class="slider-track">
+                  <article class="slide-card">
+                    <span>01</span>
+                    <h3>طراحی چشم‌نواز</h3>
+                    <p>رنگ، تایپوگرافی، فاصله‌گذاری و کارت‌های شیشه‌ای را به شکلی هماهنگ تمرین می‌کنی.</p>
+                  </article>
+                  <article class="slide-card">
+                    <span>02</span>
+                    <h3>تعامل و حرکت نرم</h3>
+                    <p>اسکرول نرم، افکت هاور، نمایش تدریجی عناصر و ریزتعامل‌های کاربردی به خروجی اضافه می‌شود.</p>
+                  </article>
+                  <article class="slide-card">
+                    <span>03</span>
+                    <h3>خروجی واکنش‌گرا</h3>
+                    <p>صفحه برای موبایل، تبلت و دسکتاپ کنترل می‌شود تا کاربر در هر اندازه صفحه تجربه خوبی داشته باشد.</p>
+                  </article>
+                </div>
+              </div>
+              <div class="slider-controls" aria-label="کنترل اسلایدر تجربه دوره">
+                <button type="button" data-slider-prev aria-label="اسلاید قبلی">→</button>
+                <div class="slider-dots" data-slider-dots></div>
+                <button type="button" data-slider-next aria-label="اسلاید بعدی">←</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section class="section compare-section">
         <div class="container">
           <div class="section-head center reveal">
@@ -307,13 +371,20 @@
       <section class="section instructor" id="instructor">
         <div class="container instructor-grid">
           <div class="instructor-photo reveal">
-            <img
-              src="./assets/instructor-hero-BtbWE4mA.jpg"
-              alt="تصویر علی‌رضا سجادی مدرس دوره"
-              width="520"
-              height="620"
-              loading="lazy"
-            />
+            <picture>
+              <source
+                srcset="./assets/instructor-hero-BtbWE4mA.jpg 640w"
+                sizes="(max-width: 820px) 78vw, 420px"
+              />
+              <img
+                src="./assets/instructor-hero-BtbWE4mA.jpg"
+                alt="تصویر علی‌رضا سجادی مدرس دوره"
+                width="520"
+                height="620"
+                loading="lazy"
+                decoding="async"
+              />
+            </picture>
           </div>
           <div class="reveal">
             <span class="eyebrow">مدرس دوره</span>
@@ -578,6 +649,8 @@
         </div>
       </div>
     </div>
+
+    <button class="back-to-top" type="button" aria-label="بازگشت به بالای صفحه" data-back-to-top>↑</button>
 
     <footer class="footer">
       <div class="container footer-grid">
