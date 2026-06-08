@@ -230,33 +230,15 @@ function updateScrollState() {
 updateScrollState();
 addEventListener("scroll", updateScrollState, { passive: true });
 
-function setMobileMenuOpen(isOpen) {
-  navLinks.classList.toggle("open", isOpen);
-  document.body.classList.toggle("menu-open", isOpen);
-  menuToggle.setAttribute("aria-expanded", String(isOpen));
-  menuToggle.setAttribute("aria-label", isOpen ? "بستن منو" : "باز کردن منو");
-}
-
 menuToggle.addEventListener("click", () => {
-  setMobileMenuOpen(!navLinks.classList.contains("open"));
-});
-
-document.addEventListener("click", (event) => {
-  if (!navLinks.classList.contains("open")) return;
-  if (event.target.closest("[data-nav-links]") || event.target.closest("[data-menu-toggle]")) return;
-  setMobileMenuOpen(false);
-});
-
-document.addEventListener("keydown", (event) => {
-  if (event.key === "Escape" && navLinks.classList.contains("open")) {
-    setMobileMenuOpen(false);
-    menuToggle.focus({ preventScroll: true });
-  }
+  const isOpen = navLinks.classList.toggle("open");
+  menuToggle.setAttribute("aria-expanded", isOpen);
 });
 
 $$(".nav-links a").forEach((link) => {
   link.addEventListener("click", () => {
-    setMobileMenuOpen(false);
+    navLinks.classList.remove("open");
+    menuToggle.setAttribute("aria-expanded", "false");
   });
 });
 
@@ -1106,13 +1088,7 @@ function initActiveNavigation() {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return;
         links.forEach((link) => {
-          const isActive = link.getAttribute("href") === `#${entry.target.id}`;
-          link.classList.toggle("active", isActive);
-          if (isActive) {
-            link.setAttribute("aria-current", "page");
-          } else {
-            link.removeAttribute("aria-current");
-          }
+          link.classList.toggle("active", link.getAttribute("href") === `#${entry.target.id}`);
         });
       });
     },
@@ -1125,29 +1101,3 @@ function initActiveNavigation() {
 initLearningSlider();
 initBackToTop();
 initActiveNavigation();
-
-
-function initPointerSpotlight() {
-  if (!matchMedia("(pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-
-  let rafId = 0;
-  let latestX = 50;
-  let latestY = 20;
-
-  document.addEventListener(
-    "pointermove",
-    (event) => {
-      latestX = (event.clientX / innerWidth) * 100;
-      latestY = (event.clientY / innerHeight) * 100;
-      if (rafId) return;
-      rafId = requestAnimationFrame(() => {
-        document.body.style.setProperty("--spotlight-x", `${latestX.toFixed(2)}%`);
-        document.body.style.setProperty("--spotlight-y", `${latestY.toFixed(2)}%`);
-        rafId = 0;
-      });
-    },
-    { passive: true },
-  );
-}
-
-initPointerSpotlight();
