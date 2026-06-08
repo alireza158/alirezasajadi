@@ -2301,11 +2301,31 @@ html.advisor-open.register-modal-open {
   }
   .ai-chat-questions {
     margin: 0 14px 10px !important;
-    padding: 10px !important;
+    padding: 10px 10px 8px !important;
+    overflow: hidden !important;
+  }
+  .ai-chat-questions-title {
+    margin-bottom: 8px !important;
   }
   .ai-chat-questions-grid {
-    grid-template-columns: 1fr !important;
-    gap: 7px !important;
+    display: flex !important;
+    grid-template-columns: none !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-inline: contain !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+  .ai-chat-questions-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+  .ai-chat-questions button.advisor-option-card {
+    flex: 0 0 min(74vw, 280px) !important;
+    width: auto !important;
+    scroll-snap-align: start !important;
   }
   .ai-chat-register-action {
     padding: 0 14px 10px !important;
