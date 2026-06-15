@@ -12,6 +12,7 @@ function admin_header(string $title): void
         'leads.php' => ['label' => 'لیدها', 'icon' => 'bi-person-lines-fill'],
         'chats.php' => ['label' => 'چت‌ها', 'icon' => 'bi-chat-dots'],
         'settings.php' => ['label' => 'تنظیمات', 'icon' => 'bi-gear'],
+        'content.php' => ['label' => 'محتوای صفحه', 'icon' => 'bi-layout-text-window'],
     ];
     ?>
 <!doctype html>
@@ -64,7 +65,7 @@ function admin_header(string $title): void
           <p class="page-kicker">مدیریت <?= e($settings['course_title']) ?></p>
           <h1><?= e($title) ?></h1>
         </div>
-        <a class="btn btn-outline-primary site-link" href="../index.html"><i class="bi bi-house"></i> بازگشت به سایت</a>
+        <a class="btn btn-outline-primary site-link" href="../index.php"><i class="bi bi-house"></i> بازگشت به سایت</a>
       </header>
       <?php flash_message(); ?>
 <?php }

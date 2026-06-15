@@ -111,6 +111,39 @@ function write_leads(array $leads): bool { return write_json_file(LEADS_FILE, ar
 function read_chats(): array { return read_json_file(CHATS_FILE, []); }
 function write_chats(array $chats): bool { return write_json_file(CHATS_FILE, array_values($chats)); }
 
+function default_landing_content(): array
+{
+    return [
+        'features' => [],
+        'projects' => [],
+        'audience' => [],
+        'curriculum' => [],
+        'results' => [],
+        'testimonials' => [],
+        'faqs' => [],
+    ];
+}
+
+function read_landing_content(): array
+{
+    return array_merge(default_landing_content(), read_json_file(LANDING_CONTENT_FILE, default_landing_content()));
+}
+
+function write_landing_content(array $content): bool
+{
+    return write_json_file(LANDING_CONTENT_FILE, array_merge(default_landing_content(), $content));
+}
+
+function decode_admin_json_field(string $value, string $field, array &$errors): array
+{
+    $decoded = json_decode($value, true);
+    if (!is_array($decoded)) {
+        $errors[] = 'ساختار JSON بخش ' . $field . ' معتبر نیست.';
+        return [];
+    }
+    return $decoded;
+}
+
 function read_settings(): array
 {
     return array_merge(DEFAULT_SETTINGS, read_json_file(SETTINGS_FILE, DEFAULT_SETTINGS));
