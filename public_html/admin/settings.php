@@ -16,6 +16,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'site_return_url' => clean_url($_POST['site_return_url'] ?? '') ?: DEFAULT_SETTINGS['site_return_url'],
         'merchant_id' => clean_text($_POST['merchant_id'] ?? '', 120),
         'callback_url' => clean_url($_POST['callback_url'] ?? '') ?: DEFAULT_SETTINGS['callback_url'],
+        'seo_title' => clean_text($_POST['seo_title'] ?? '', 220),
+        'meta_description' => clean_text($_POST['meta_description'] ?? '', 320),
     ]);
     $_SESSION[$saved ? 'flash' : 'flash_error'] = $saved ? 'تنظیمات دوره با موفقیت ذخیره شد.' : 'ذخیره تنظیمات با خطا روبه‌رو شد.';
     redirect('settings.php');
@@ -37,6 +39,8 @@ admin_header('تنظیمات دوره');
     <div class="col-12 col-md-6"><label class="form-label">لینک بازگشت به سایت</label><input class="form-control ltr" name="site_return_url" value="<?= e($settings['site_return_url']) ?>"></div>
     <div class="col-12 col-md-6"><label class="form-label">Callback URL</label><input class="form-control ltr" name="callback_url" value="<?= e($settings['callback_url']) ?>"></div>
     <div class="col-12"><label class="form-label">Merchant ID زرین‌پال</label><input class="form-control ltr" name="merchant_id" value="<?= e($settings['merchant_id']) ?>"></div>
+    <div class="col-12 col-lg-6"><label class="form-label">عنوان SEO صفحه اصلی</label><input class="form-control" name="seo_title" value="<?= e($settings['seo_title'] ?? '') ?>"></div>
+    <div class="col-12 col-lg-6"><label class="form-label">Meta Description</label><input class="form-control" name="meta_description" value="<?= e($settings['meta_description'] ?? '') ?>"></div>
     <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" role="switch" id="registration_enabled" name="registration_enabled" <?= !empty($settings['registration_enabled']) ? 'checked' : '' ?>><label class="form-check-label" for="registration_enabled">ثبت‌نام دوره فعال باشد</label></div></div>
     <div class="col-12"><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-save"></i> ذخیره تنظیمات</button></div>
   </form>
