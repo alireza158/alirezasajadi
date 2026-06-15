@@ -3,6 +3,7 @@ const activeItems = (key) => (Array.isArray(LANDING_DATA[key]) ? LANDING_DATA[ke
   .filter((item) => !item || (item.status !== "inactive" && item.show_home !== false))
   .sort((a, b) => (Number(a?.sort_order || 0) - Number(b?.sort_order || 0)));
 const normalizePair = (item) => Array.isArray(item) ? { title: item[0] || "", description: item[1] || "" } : (item || {});
+const escapeAttr = (value) => String(value || "").replace(/[&<>"']/g, (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]);
 const features = activeItems("features");
 const projects = activeItems("projects");
 const audience = activeItems("audience");
@@ -33,15 +34,20 @@ $("[data-project-grid]").innerHTML = projects
   .map(
     (project) => {
       const item = Array.isArray(project) ? { title: project[0], description: project[1], tags: project[2] || [], link: "#curriculum", button_text: "مشاهده دوره ←" } : project;
+      const fullImage = item.full_image || item.image || "";
+      const lightboxAttrs = fullImage
+        ? `data-lightbox-image="${escapeAttr(fullImage)}" data-lightbox-title="${escapeAttr(item.title || "نمونه‌کار")}" tabindex="0" role="button"`
+        : "";
       const imageMarkup = item.image
-        ? `<img src="${item.image}" alt="${item.title || "نمونه‌کار"}" loading="lazy" />`
+        ? `<img src="${item.thumbnail_image || item.image}" alt="${escapeAttr(item.title || "نمونه‌کار")}" loading="lazy" />`
         : `<div class="project-card-placeholder" aria-hidden="true"><span></span><span></span><span></span></div>`;
       return `
-      <article class="project-card">
-        <a class="project-card-image" href="${item.link || "#curriculum"}" aria-label="${item.title || "مشاهده نمونه‌کار"}">
+      <article class="project-card ${fullImage ? "has-lightbox" : ""}">
+        <div class="project-card-image" ${lightboxAttrs} aria-label="${escapeAttr(item.title || "مشاهده تصویر کامل نمونه‌کار")}">
           ${imageMarkup}
-        </a>
-        <div class="project-card-body">
+          ${fullImage ? `<span class="project-view-full" aria-hidden="true">مشاهده تصویر کامل</span>` : ""}
+        </div>
+        <div class="project-card-body" ${lightboxAttrs} aria-label="${escapeAttr(item.title || "مشاهده تصویر کامل نمونه‌کار")}">
           <h3>${item.title || ""}</h3>
           <p>${item.description || ""}</p>
           <div class="project-tags">${(item.tags || []).slice(0, 5).map((tag) => `<span>${tag}</span>`).join("")}</div>
@@ -119,6 +125,166 @@ function renderAccordion(items, root) {
 
 renderAccordion(curriculum, $("[data-accordion]"));
 renderAccordion(faqs, $("[data-faq]"));
+
+function createPortfolioLightbox() {
+  const lightbox = document.createElement("section");
+  lightbox.className = "portfolio-lightbox";
+  lightbox.setAttribute("data-portfolio-lightbox", "");
+  lightbox.setAttribute("aria-hidden", "true");
+  lightbox.innerHTML = `
+    <div class="portfolio-lightbox-backdrop" data-lightbox-close></div>
+    <div class="portfolio-lightbox-dialog" role="dialog" aria-modal="true" aria-label="نمایش تصویر کامل نمونه‌کار">
+      <button type="button" class="portfolio-lightbox-close" data-lightbox-close aria-label="بستن">×</button>
+      <header class="portfolio-lightbox-header"><h3 data-lightbox-title></h3></header>
+      <div class="portfolio-lightbox-stage" data-lightbox-stage>
+        <img data-lightbox-img src="" alt="" draggable="false" />
+      </div>
+      <div class="portfolio-lightbox-controls" aria-label="کنترل بزرگنمایی تصویر">
+        <button type="button" data-zoom-out aria-label="کوچک کردن">−</button>
+        <button type="button" data-zoom-reset>Reset</button>
+        <button type="button" data-zoom-in aria-label="بزرگ کردن">+</button>
+      </div>
+    </div>
+  `;
+  document.body.append(lightbox);
+
+  const title = $("[data-lightbox-title]", lightbox);
+  const img = $("[data-lightbox-img]", lightbox);
+  const stage = $("[data-lightbox-stage]", lightbox);
+  const zoomIn = $("[data-zoom-in]", lightbox);
+  const zoomOut = $("[data-zoom-out]", lightbox);
+  const zoomReset = $("[data-zoom-reset]", lightbox);
+  const pointers = new Map();
+  let scale = 1;
+  let translateX = 0;
+  let translateY = 0;
+  let dragStart = null;
+  let pinchStart = null;
+
+  function applyTransform() {
+    img.style.transform = `translate3d(${translateX}px, ${translateY}px, 0) scale(${scale})`;
+    stage.classList.toggle("is-zoomed", scale > 1.02);
+  }
+
+  function clampScale(value) {
+    return Math.min(5, Math.max(1, value));
+  }
+
+  function setScale(nextScale, originX = 0, originY = 0) {
+    const previous = scale;
+    scale = clampScale(nextScale);
+    if (scale === 1) {
+      translateX = 0;
+      translateY = 0;
+    } else if (previous !== scale && originX && originY) {
+      const rect = stage.getBoundingClientRect();
+      const offsetX = originX - rect.left - rect.width / 2;
+      const offsetY = originY - rect.top - rect.height / 2;
+      const factor = scale / previous - 1;
+      translateX -= offsetX * factor;
+      translateY -= offsetY * factor;
+    }
+    applyTransform();
+  }
+
+  function resetZoom() {
+    scale = 1;
+    translateX = 0;
+    translateY = 0;
+    pointers.clear();
+    dragStart = null;
+    pinchStart = null;
+    applyTransform();
+  }
+
+  function openLightbox(src, itemTitle) {
+    if (!src) return;
+    resetZoom();
+    img.src = src;
+    img.alt = itemTitle || "تصویر کامل نمونه‌کار";
+    title.textContent = itemTitle || "نمونه‌کار";
+    lightbox.classList.add("open");
+    lightbox.setAttribute("aria-hidden", "false");
+    document.body.classList.add("portfolio-lightbox-open");
+    setTimeout(() => lightbox.querySelector("[data-lightbox-close]").focus({ preventScroll: true }), 30);
+  }
+
+  function closeLightbox() {
+    lightbox.classList.remove("open");
+    lightbox.setAttribute("aria-hidden", "true");
+    document.body.classList.remove("portfolio-lightbox-open");
+    resetZoom();
+    img.removeAttribute("src");
+  }
+
+  document.addEventListener("click", (event) => {
+    const trigger = event.target.closest("[data-lightbox-image]");
+    if (!trigger || event.target.closest(".project-link")) return;
+    event.preventDefault();
+    openLightbox(trigger.dataset.lightboxImage, trigger.dataset.lightboxTitle);
+  });
+
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && lightbox.classList.contains("open")) closeLightbox();
+    if ((event.key === "Enter" || event.key === " ") && document.activeElement?.matches("[data-lightbox-image]")) {
+      event.preventDefault();
+      openLightbox(document.activeElement.dataset.lightboxImage, document.activeElement.dataset.lightboxTitle);
+    }
+  });
+
+  $$('[data-lightbox-close]', lightbox).forEach((button) => button.addEventListener("click", closeLightbox));
+  zoomIn.addEventListener("click", () => setScale(scale + 0.35));
+  zoomOut.addEventListener("click", () => setScale(scale - 0.35));
+  zoomReset.addEventListener("click", resetZoom);
+  stage.addEventListener("dblclick", (event) => setScale(scale > 1 ? 1 : 2.25, event.clientX, event.clientY));
+  stage.addEventListener("wheel", (event) => {
+    event.preventDefault();
+    setScale(scale + (event.deltaY < 0 ? 0.18 : -0.18), event.clientX, event.clientY);
+  }, { passive: false });
+
+  stage.addEventListener("pointerdown", (event) => {
+    if (!lightbox.classList.contains("open")) return;
+    stage.setPointerCapture(event.pointerId);
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointers.size === 1 && scale > 1) {
+      dragStart = { x: event.clientX, y: event.clientY, translateX, translateY };
+    }
+    if (pointers.size === 2) {
+      const points = [...pointers.values()];
+      pinchStart = { distance: Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y), scale };
+      dragStart = null;
+    }
+  });
+
+  stage.addEventListener("pointermove", (event) => {
+    if (!pointers.has(event.pointerId)) return;
+    pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (pointers.size === 2 && pinchStart) {
+      event.preventDefault();
+      const points = [...pointers.values()];
+      const distance = Math.hypot(points[0].x - points[1].x, points[0].y - points[1].y);
+      setScale(pinchStart.scale * (distance / pinchStart.distance));
+      return;
+    }
+    if (dragStart && scale > 1) {
+      event.preventDefault();
+      translateX = dragStart.translateX + event.clientX - dragStart.x;
+      translateY = dragStart.translateY + event.clientY - dragStart.y;
+      applyTransform();
+    }
+  });
+
+  function endPointer(event) {
+    pointers.delete(event.pointerId);
+    if (pointers.size < 2) pinchStart = null;
+    if (pointers.size === 0) dragStart = null;
+  }
+  stage.addEventListener("pointerup", endPointer);
+  stage.addEventListener("pointercancel", endPointer);
+}
+
+createPortfolioLightbox();
+
 
 $$(".accordion-button").forEach((button) => {
   button.addEventListener("click", () => {

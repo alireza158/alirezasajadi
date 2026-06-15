@@ -120,7 +120,7 @@ function landing_section_configs(): array
 {
     return [
         'features' => ['label' => 'مهارت‌های عملی', 'icon' => 'bi-stars', 'fields' => ['icon', 'title', 'description']],
-        'projects' => ['label' => 'نمونه‌کارها', 'icon' => 'bi-kanban', 'fields' => ['title', 'description', 'full_description', 'image', 'gallery', 'tags', 'category', 'button_text', 'link', 'show_home']],
+        'projects' => ['label' => 'نمونه‌کارها', 'icon' => 'bi-kanban', 'fields' => ['title', 'description', 'full_description', 'thumbnail_image', 'image', 'full_image', 'gallery', 'tags', 'category', 'button_text', 'link', 'show_home']],
         'audience' => ['label' => 'مخاطبان دوره', 'icon' => 'bi-people', 'fields' => ['title', 'description', 'icon']],
         'curriculum' => ['label' => 'سرفصل‌ها', 'icon' => 'bi-journal-text', 'fields' => ['title', 'description', 'duration', 'lessons']],
         'results' => ['label' => 'نتایج دوره', 'icon' => 'bi-trophy', 'fields' => ['title', 'description', 'icon']],
@@ -131,7 +131,7 @@ function landing_section_configs(): array
 
 function normalize_section_item(mixed $item, string $section, int $index): array
 {
-    $base = ['id' => 'item-' . ($index + 1), 'title' => '', 'description' => '', 'full_description' => '', 'icon' => '', 'image' => '', 'gallery' => [], 'link' => '', 'button_text' => '', 'tags' => [], 'lessons' => [], 'duration' => '', 'subtitle' => '', 'rating' => '', 'category' => '', 'show_home' => true, 'sort_order' => $index + 1, 'status' => 'active'];
+    $base = ['id' => 'item-' . ($index + 1), 'title' => '', 'description' => '', 'full_description' => '', 'icon' => '', 'thumbnail_image' => '', 'image' => '', 'full_image' => '', 'gallery' => [], 'link' => '', 'button_text' => '', 'tags' => [], 'lessons' => [], 'duration' => '', 'subtitle' => '', 'rating' => '', 'category' => '', 'show_home' => true, 'sort_order' => $index + 1, 'status' => 'active'];
     if (is_array($item) && array_is_list($item)) {
         if ($section === 'features') return array_merge($base, ['icon' => (string)($item[0] ?? ''), 'title' => (string)($item[1] ?? '')]);
         if ($section === 'projects') return array_merge($base, ['title' => (string)($item[0] ?? ''), 'description' => (string)($item[1] ?? ''), 'tags' => array_values((array)($item[2] ?? [])), 'button_text' => 'مشاهده دوره ←', 'link' => '#curriculum']);

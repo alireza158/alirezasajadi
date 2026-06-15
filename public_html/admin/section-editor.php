@@ -25,10 +25,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         redirect('section-editor.php?section=' . urlencode($section));
     }
 
+    $thumbnailImage = clean_text($_POST['existing_thumbnail_image'] ?? '', 500);
+    if (!empty($_FILES['thumbnail_image_file'])) {
+        $uploaded = save_uploaded_media($_FILES['thumbnail_image_file'], $errors);
+        if ($uploaded !== '') $thumbnailImage = $uploaded;
+    }
     $image = clean_text($_POST['existing_image'] ?? '', 500);
     if (!empty($_FILES['image_file'])) {
         $uploaded = save_uploaded_media($_FILES['image_file'], $errors);
         if ($uploaded !== '') $image = $uploaded;
+    }
+    $fullImage = clean_text($_POST['existing_full_image'] ?? '', 500);
+    if (!empty($_FILES['full_image_file'])) {
+        $uploaded = save_uploaded_media($_FILES['full_image_file'], $errors);
+        if ($uploaded !== '') $fullImage = $uploaded;
     }
     $gallery = array_values(array_filter(array_map(fn($v) => clean_text($v, 500), preg_split('/\R/u', (string)($_POST['existing_gallery'] ?? '')) ?: [])));
     if (!empty($_FILES['gallery_files']['name']) && is_array($_FILES['gallery_files']['name'])) {
@@ -50,7 +60,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'description' => clean_text($_POST['description'] ?? '', 2000),
         'full_description' => clean_text($_POST['full_description'] ?? '', 5000),
         'icon' => clean_text($_POST['icon'] ?? '', 80),
+        'thumbnail_image' => $thumbnailImage,
         'image' => $image,
+        'full_image' => $fullImage,
         'gallery' => $gallery,
         'link' => clean_text($_POST['link'] ?? '', 500),
         'button_text' => clean_text($_POST['button_text'] ?? '', 120),
@@ -83,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $editId = clean_text($_GET['edit'] ?? '', 80);
 $editing = null;
 foreach ($items as $item) if (($item['id'] ?? '') === $editId) $editing = $item;
-$empty = ['id'=>'','title'=>'','description'=>'','icon'=>'','image'=>'','gallery'=>[],'link'=>'','button_text'=>'','tags'=>[],'lessons'=>[],'full_description'=>'','duration'=>'','subtitle'=>'','rating'=>'','category'=>'','show_home'=>true,'sort_order'=>count($items)+1,'status'=>'active'];
+$empty = ['id'=>'','title'=>'','description'=>'','icon'=>'','thumbnail_image'=>'','image'=>'','full_image'=>'','gallery'=>[],'link'=>'','button_text'=>'','tags'=>[],'lessons'=>[],'full_description'=>'','duration'=>'','subtitle'=>'','rating'=>'','category'=>'','show_home'=>true,'sort_order'=>count($items)+1,'status'=>'active'];
 $form = array_merge($empty, $editing ?: []);
 admin_header('مدیریت ' . $config['label']);
 ?>
@@ -94,13 +106,17 @@ admin_header('مدیریت ' . $config['label']);
       <form method="post" enctype="multipart/form-data" class="row g-3 settings-form">
         <input type="hidden" name="csrf_token" value="<?= e(csrf_token()) ?>">
         <input type="hidden" name="id" value="<?= e($form['id']) ?>">
+        <input type="hidden" name="existing_thumbnail_image" value="<?= e($form['thumbnail_image'] ?? '') ?>">
         <input type="hidden" name="existing_image" value="<?= e($form['image']) ?>">
+        <input type="hidden" name="existing_full_image" value="<?= e($form['full_image'] ?? '') ?>">
         <div class="col-12"><label class="form-label">عنوان</label><input class="form-control" name="title" value="<?= e($form['title']) ?>" required></div>
         <div class="col-12"><label class="form-label">توضیح کوتاه / پاسخ</label><textarea class="form-control" name="description" rows="3"><?= e($form['description']) ?></textarea></div>
         <div class="col-12"><label class="form-label">توضیح کامل</label><textarea class="form-control" name="full_description" rows="4"><?= e($form['full_description'] ?? '') ?></textarea></div>
         <div class="col-12 col-md-6"><label class="form-label">آیکون / شماره</label><input class="form-control" name="icon" value="<?= e($form['icon']) ?>"></div>
         <div class="col-12 col-md-6"><label class="form-label">ترتیب نمایش</label><input class="form-control ltr" name="sort_order" inputmode="numeric" value="<?= e($form['sort_order']) ?>"></div>
+        <div class="col-12"><label class="form-label">تصویر کارت / Thumbnail</label><input class="form-control" type="file" name="thumbnail_image_file" accept="image/*"><?php if (!empty($form['thumbnail_image'])): ?><img class="admin-thumb mt-2" src="../<?= e(ltrim((string)$form['thumbnail_image'], './')) ?>" alt=""><?php endif; ?></div>
         <div class="col-12"><label class="form-label">تصویر شاخص</label><input class="form-control" type="file" name="image_file" accept="image/*"><?php if ($form['image']): ?><img class="admin-thumb mt-2" src="../<?= e(ltrim((string)$form['image'], './')) ?>" alt=""><?php endif; ?></div>
+        <div class="col-12"><label class="form-label">تصویر کامل برای لایت‌باکس</label><input class="form-control" type="file" name="full_image_file" accept="image/*"><?php if (!empty($form['full_image'])): ?><img class="admin-thumb mt-2" src="../<?= e(ltrim((string)$form['full_image'], './')) ?>" alt=""><?php endif; ?></div>
         <div class="col-12"><label class="form-label">گالری تصاویر</label><input class="form-control" type="file" name="gallery_files[]" accept="image/*" multiple><textarea class="form-control ltr mt-2" dir="ltr" name="existing_gallery" rows="3" placeholder="مسیر تصاویر گالری، هر خط یک تصویر"><?= e(implode("\n", (array)($form['gallery'] ?? []))) ?></textarea></div>
         <div class="col-12 col-md-6"><label class="form-label">متن دکمه</label><input class="form-control" name="button_text" value="<?= e($form['button_text']) ?>"></div>
         <div class="col-12 col-md-6"><label class="form-label">لینک</label><input class="form-control ltr" name="link" value="<?= e($form['link']) ?>"></div>
