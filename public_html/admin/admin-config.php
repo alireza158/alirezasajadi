@@ -10,11 +10,24 @@ const ADMIN_PASSWORD_HASH = '$2y$12$6O/ZFfHrKsblukdRLSNYHOeYEy3jF/ufxPqm4pdvT.Vo
 const ADMIN_SESSION_KEY = 'course_admin_authenticated';
 
 const ADMIN_BASE_PATH = __DIR__;
+
+/**
+ * مسیر داده‌های سایت PHP
+ * سفارش‌ها، تنظیمات پرداخت و اطلاعات مربوط به checkout بهتر است همینجا بماند.
+ */
 const DATA_DIR = __DIR__ . '/../data';
+
 const ORDERS_FILE = DATA_DIR . '/orders.json';
-const LEADS_FILE = DATA_DIR . '/leads.json';
-const CHATS_FILE = DATA_DIR . '/chats.json';
 const SETTINGS_FILE = DATA_DIR . '/settings.json';
+
+/**
+ * مسیر داده‌های سرویس Node.js مشاور هوشمند
+ * چت‌ها و لیدهایی که از چت‌بات ثبت می‌شوند اینجا ذخیره می‌شوند.
+ */
+const NODE_DATA_DIR = '/home/reentawa/ai-consultant/data';
+
+const CHATS_FILE = NODE_DATA_DIR . '/chats.json';
+const LEADS_FILE = NODE_DATA_DIR . '/leads.json';
 
 const DEFAULT_SETTINGS = [
     'course_title' => 'آموزش طراحی سایت با هوش مصنوعی',
