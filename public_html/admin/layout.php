@@ -12,7 +12,9 @@ function admin_header(string $title): void
         'leads.php' => ['label' => 'لیدها', 'icon' => 'bi-person-lines-fill'],
         'chats.php' => ['label' => 'چت‌ها', 'icon' => 'bi-chat-dots'],
         'settings.php' => ['label' => 'تنظیمات', 'icon' => 'bi-gear'],
+        'media.php' => ['label' => 'رسانه‌ها', 'icon' => 'bi-images'],
     ];
+    $sectionItems = landing_section_configs();
     ?>
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -48,6 +50,12 @@ function admin_header(string $title): void
               <i class="bi <?= e($item['icon']) ?>"></i><span><?= e($item['label']) ?></span>
             </a>
           <?php endforeach; ?>
+          <div class="admin-nav-group">مدیریت سکشن‌های صفحه اصلی</div>
+          <?php foreach ($sectionItems as $key => $item): $href = 'section-editor.php?section=' . $key; ?>
+            <a class="<?= $current === 'section-editor.php' && ($_GET['section'] ?? '') === $key ? 'active' : '' ?>" href="<?= e($href) ?>">
+              <i class="bi <?= e($item['icon']) ?>"></i><span><?= e($item['label']) ?></span>
+            </a>
+          <?php endforeach; ?>
         </nav>
         <div class="sidebar-footer">
           <a class="logout-link" href="logout.php"><i class="bi bi-box-arrow-right"></i> خروج امن</a>
@@ -64,7 +72,7 @@ function admin_header(string $title): void
           <p class="page-kicker">مدیریت <?= e($settings['course_title']) ?></p>
           <h1><?= e($title) ?></h1>
         </div>
-        <a class="btn btn-outline-primary site-link" href="../index.html"><i class="bi bi-house"></i> بازگشت به سایت</a>
+        <a class="btn btn-outline-primary site-link" href="../index.php"><i class="bi bi-house"></i> بازگشت به سایت</a>
       </header>
       <?php flash_message(); ?>
 <?php }

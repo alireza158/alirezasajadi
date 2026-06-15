@@ -111,6 +111,89 @@ function write_leads(array $leads): bool { return write_json_file(LEADS_FILE, ar
 function read_chats(): array { return read_json_file(CHATS_FILE, []); }
 function write_chats(array $chats): bool { return write_json_file(CHATS_FILE, array_values($chats)); }
 
+function default_landing_content(): array
+{
+    return array_fill_keys(array_keys(landing_section_configs()), []);
+}
+
+function landing_section_configs(): array
+{
+    return [
+        'features' => ['label' => 'مهارت‌های عملی', 'icon' => 'bi-stars', 'fields' => ['icon', 'title', 'description']],
+        'projects' => ['label' => 'نمونه‌کارها', 'icon' => 'bi-kanban', 'fields' => ['title', 'description', 'full_description', 'thumbnail_image', 'image', 'full_image', 'gallery', 'tags', 'category', 'button_text', 'link', 'show_home']],
+        'audience' => ['label' => 'مخاطبان دوره', 'icon' => 'bi-people', 'fields' => ['title', 'description', 'icon']],
+        'curriculum' => ['label' => 'سرفصل‌ها', 'icon' => 'bi-journal-text', 'fields' => ['title', 'description', 'duration', 'lessons']],
+        'results' => ['label' => 'نتایج دوره', 'icon' => 'bi-trophy', 'fields' => ['title', 'description', 'icon']],
+        'testimonials' => ['label' => 'نظرات هنرجوها', 'icon' => 'bi-chat-heart', 'fields' => ['title', 'subtitle', 'description', 'image', 'rating']],
+        'faqs' => ['label' => 'سوالات متداول', 'icon' => 'bi-question-circle', 'fields' => ['title', 'description', 'category']],
+    ];
+}
+
+function normalize_section_item(mixed $item, string $section, int $index): array
+{
+    $base = ['id' => 'item-' . ($index + 1), 'title' => '', 'description' => '', 'full_description' => '', 'icon' => '', 'thumbnail_image' => '', 'image' => '', 'full_image' => '', 'gallery' => [], 'link' => '', 'button_text' => '', 'tags' => [], 'lessons' => [], 'duration' => '', 'subtitle' => '', 'rating' => '', 'category' => '', 'show_home' => true, 'sort_order' => $index + 1, 'status' => 'active'];
+    if (is_array($item) && array_is_list($item)) {
+        if ($section === 'features') return array_merge($base, ['icon' => (string)($item[0] ?? ''), 'title' => (string)($item[1] ?? '')]);
+        if ($section === 'projects') return array_merge($base, ['title' => (string)($item[0] ?? ''), 'description' => (string)($item[1] ?? ''), 'tags' => array_values((array)($item[2] ?? [])), 'button_text' => 'مشاهده دوره ←', 'link' => '#curriculum']);
+        if ($section === 'curriculum' || $section === 'faqs') return array_merge($base, ['title' => (string)($item[0] ?? ''), 'description' => (string)($item[1] ?? '')]);
+    }
+    if (is_string($item)) {
+        if ($section === 'testimonials') {
+            return array_merge($base, ['title' => 'هنرجوی دوره ' . ($index + 1), 'description' => $item]);
+        }
+        return array_merge($base, ['title' => $item, 'icon' => $section === 'results' ? '✓' : '']);
+    }
+    if (is_array($item)) {
+        $merged = array_merge($base, $item);
+        $merged['id'] = clean_text($merged['id'] ?: ('item-' . ($index + 1)), 80);
+        $merged['tags'] = array_values(array_filter(array_map('strval', (array)($merged['tags'] ?? []))));
+        $merged['gallery'] = array_values(array_filter(array_map('strval', (array)($merged['gallery'] ?? []))));
+        $merged['show_home'] = filter_var($merged['show_home'] ?? true, FILTER_VALIDATE_BOOLEAN);
+        $merged['lessons'] = array_values(array_filter(array_map('strval', (array)($merged['lessons'] ?? []))));
+        $merged['sort_order'] = (int)($merged['sort_order'] ?? ($index + 1));
+        $merged['status'] = ($merged['status'] ?? 'active') === 'inactive' ? 'inactive' : 'active';
+        return $merged;
+    }
+    return $base;
+}
+
+function normalize_landing_content(array $content): array
+{
+    $normalized = [];
+    foreach (landing_section_configs() as $section => $config) {
+        $items = (array)($content[$section] ?? []);
+        $items = array_map(fn($item, $index) => normalize_section_item($item, $section, $index), $items, array_keys($items));
+        usort($items, fn($a, $b) => ((int)($a['sort_order'] ?? 0)) <=> ((int)($b['sort_order'] ?? 0)));
+        $normalized[$section] = array_values($items);
+    }
+    return $normalized;
+}
+
+function read_landing_content(): array
+{
+    return normalize_landing_content(read_json_file(LANDING_CONTENT_FILE, default_landing_content()));
+}
+
+function write_landing_content(array $content): bool
+{
+    return write_json_file(LANDING_CONTENT_FILE, normalize_landing_content($content));
+}
+
+function save_uploaded_media(array $file, array &$errors): string
+{
+    if (($file['error'] ?? UPLOAD_ERR_NO_FILE) === UPLOAD_ERR_NO_FILE) return '';
+    if (($file['error'] ?? UPLOAD_ERR_OK) !== UPLOAD_ERR_OK) { $errors[] = 'آپلود فایل با خطا روبه‌رو شد.'; return ''; }
+    $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp', 'image/gif' => 'gif', 'image/svg+xml' => 'svg'];
+    $tmp = (string)($file['tmp_name'] ?? '');
+    $mime = function_exists('mime_content_type') ? (mime_content_type($tmp) ?: '') : '';
+    if (!isset($allowed[$mime])) { $errors[] = 'فرمت تصویر مجاز نیست. JPG، PNG، WEBP، GIF یا SVG بارگذاری کنید.'; return ''; }
+    $dir = __DIR__ . '/../uploads';
+    if (!is_dir($dir)) mkdir($dir, 0755, true);
+    $name = 'media-' . date('Ymd-His') . '-' . bin2hex(random_bytes(4)) . '.' . $allowed[$mime];
+    if (!move_uploaded_file($tmp, $dir . '/' . $name)) { $errors[] = 'ذخیره فایل آپلودی ممکن نشد.'; return ''; }
+    return './uploads/' . $name;
+}
+
 function read_settings(): array
 {
     return array_merge(DEFAULT_SETTINGS, read_json_file(SETTINGS_FILE, DEFAULT_SETTINGS));
