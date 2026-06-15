@@ -144,6 +144,38 @@ function decode_admin_json_field(string $value, string $field, array &$errors): 
     return $decoded;
 }
 
+
+function default_cms_content(): array
+{
+    return [
+        'hero' => [[
+            'id'=>1,'eyebrow'=>'مسیر عملی طراحی سایت با AI','title'=>'طراحی سایت را سریع‌تر، دقیق‌تر و حرفه‌ای‌تر یاد بگیر','description'=>'قدم‌به‌قدم از ایده خام به یک صفحه زیبا و قابل ارائه برس؛ با تمرکز روی چیدمان، متن، تجربه کاربری و اصلاح خروجی.','image'=>'./assets/instructor-hero-BtbWE4mA.jpg','mobile_image'=>'./assets/instructor-hero-BtbWE4mA.jpg','image_alt'=>'مدرس دوره طراحی سایت با هوش مصنوعی','button_1_text'=>'شروع آموزش','button_1_link'=>'#start','button_1_action'=>'consultation','button_2_text'=>'دیدن مسیر یادگیری','button_2_link'=>'#path','button_2_action'=>'scroll','button_3_text'=>'مشاوره رایگان','button_3_link'=>'#start','button_3_action'=>'consultation','trust_text'=>'بدون حفظ کردن کدهای پیچیده؛ با تمرین عملی و خروجی قابل نمایش','cards'=>'مسیر مرحله‌به‌مرحله\nتمرین‌های کاربردی\nمناسب شروع جدی\nآماده برای نمونه‌کار','float_cards'=>'Idea → Page\nنمونه‌کار آماده\nAI Assistant','sort_order'=>1,'status'=>'active'
+        ]],
+        'challenges' => [
+            ['id'=>1,'number'=>'۰۱','title'=>'آموزش‌های پراکنده','description'=>'ویدئوهای زیادی می‌بینی، اما مسیر مشخصی برای شروع و پایان پروژه نداری.','icon'=>'','image'=>'','sort_order'=>1,'status'=>'active'],
+            ['id'=>2,'number'=>'۰۲','title'=>'ترس از خطاها','description'=>'با اولین ارورها متوقف می‌شوی، چون روش تحلیل و اصلاح مرحله‌ای را تمرین نکرده‌ای.','icon'=>'','image'=>'','sort_order'=>2,'status'=>'active'],
+            ['id'=>3,'number'=>'۰۳','title'=>'نبود نمونه‌کار','description'=>'دانش زمانی ارزشمند می‌شود که به یک خروجی قابل نمایش تبدیل شود.','icon'=>'','image'=>'','sort_order'=>3,'status'=>'active'],
+            ['id'=>4,'number'=>'۰۴','title'=>'سردرگمی بین ابزارها','description'=>'وقتی معیار انتخاب نداری، هر ابزار تازه می‌تواند تمرکزت را از بین ببرد.','icon'=>'','image'=>'','sort_order'=>4,'status'=>'active'],
+        ],
+        'learning_path' => [
+            ['id'=>1,'number'=>'۱','title'=>'تعریف ایده و هدف','description'=>'مخاطب، پیام اصلی و نتیجه مورد انتظار را مشخص می‌کنی.','icon'=>'','image'=>'','sort_order'=>1,'status'=>'active'],
+            ['id'=>2,'number'=>'۲','title'=>'چیدن ساختار صفحه','description'=>'ایده را به بخش‌های خوانا، تیترهای مؤثر و مسیر تبدیل کاربر تبدیل می‌کنی.','icon'=>'','image'=>'','sort_order'=>2,'status'=>'active'],
+            ['id'=>3,'number'=>'۳','title'=>'ساخت نسخه اولیه','description'=>'با دستیار هوشمند، چیدمان و ظاهر پایه را سریع‌تر آماده می‌کنی.','icon'=>'','image'=>'','sort_order'=>3,'status'=>'active'],
+            ['id'=>4,'number'=>'۴','title'=>'بهبود متن و ظاهر','description'=>'فاصله‌ها، رنگ، تایپوگرافی و تجربه کاربری را مرحله‌به‌مرحله بهتر می‌کنی.','icon'=>'','image'=>'','sort_order'=>4,'status'=>'active'],
+            ['id'=>5,'number'=>'۵','title'=>'تحویل خروجی قابل ارائه','description'=>'فایل‌ها را مرتب می‌کنی و پروژه را برای نمایش یا نمونه‌کار آماده می‌سازی.','icon'=>'','image'=>'','sort_order'=>5,'status'=>'active'],
+        ],
+        'course_features' => array_map(fn($x,$i)=>['id'=>$i+1,'course'=>'آموزش طراحی سایت با هوش مصنوعی','title'=>$x,'description'=>'','icon'=>'','sort_order'=>$i+1,'status'=>'active'], ['آموزش ساده و مرحله‌به‌مرحله','شروع از نصب ابزارها و ساخت اولین صفحه','ساخت صفحات حرفه‌ای با کمک هوش مصنوعی','طراحی سایت واکنش‌گرا برای موبایل و دسکتاپ','ساخت سایت کامل‌تر با فرانت‌اند و بک‌اند','ساخت فرم‌ها، ثبت اطلاعات و فرآیند خرید','آشنایی با ساخت وب‌اپ و نرم‌افزار تحت وب','آماده‌سازی خروجی قابل ارائه','مناسب برای ساخت نمونه‌کار اولیه و پروژه واقعی'], array_keys(['a','b','c','d','e','f','g','h','i'])),
+        'instructor' => [['id'=>1,'name'=>'علی‌رضا سجادی','job_title'=>'مدرس طراحی سایت با ابزارهای هوشمند','short_bio'=>'تجربه ساخت صفحات وب را به زبان ساده و عملی یاد می‌گیری.','description'=>'هدف، دیدن چند دستور آماده نیست؛ هدف این است که بتوانی ایده را به ساختار، طراحی و خروجی تمیز تبدیل کنی.','image'=>'./assets/instructor-hero-BtbWE4mA.jpg','mobile_image'=>'./assets/instructor-hero-BtbWE4mA.jpg','trust_features'=>'تجربه طراحی وب\nتمرکز روی خروجی قابل ارائه\nآموزش ساده و کاربردی\nمناسب شروع حرفه‌ای','instagram'=>'','linkedin'=>'','telegram'=>'','sort_order'=>1,'status'=>'active']],
+        'ctas' => [['id'=>1,'internal_title'=>'CTA شروع مسیر','title'=>'آماده‌ای اولین خروجی جدی‌ات را بسازی؟','description'=>'از همین‌جا طراحی سایت را با برنامه، تمرین و بازخورد مرحله‌ای شروع کن.','button_text'=>'شروع یادگیری','button_link'=>'#curriculum','action'=>'consultation','variant'=>'light','location'=>'start','sort_order'=>1,'status'=>'active']],
+        'seo' => [['id'=>1,'page'=>'home','title'=>'آموزش طراحی سایت با هوش مصنوعی | علی‌رضا سجادی','meta_description'=>'یک مسیر عملی و مرحله‌به‌مرحله برای ساخت لندینگ، سایت شخصی و نمونه‌کار حرفه‌ای با کمک ابزارهای هوشمند.','meta_keywords'=>'آموزش طراحی سایت با هوش مصنوعی، طراحی سایت با AI','canonical'=>'','og_title'=>'آموزش طراحی سایت با هوش مصنوعی','og_description'=>'از ایده تا خروجی قابل ارائه؛ طراحی سایت را با مسیر عملی یاد بگیر.','og_image'=>'./assets/instructor-hero-BtbWE4mA.jpg','twitter_title'=>'آموزش طراحی سایت با هوش مصنوعی','twitter_description'=>'مسیر عملی ساخت سایت و نمونه‌کار با ابزارهای هوشمند.','twitter_image'=>'./assets/instructor-hero-BtbWE4mA.jpg','robots'=>'index,follow','sort_order'=>1,'status'=>'active']],
+        'media'=>[], 'menus'=>[], 'sections'=>[], 'portfolio_categories'=>[], 'registrations'=>[], 'consultations'=>[], 'users'=>[]
+    ];
+}
+
+function read_cms_content(): array { return array_merge(default_cms_content(), read_json_file(CMS_CONTENT_FILE, default_cms_content())); }
+function write_cms_content(array $content): bool { return write_json_file(CMS_CONTENT_FILE, array_merge(default_cms_content(), $content)); }
+function active_sorted(array $items): array { $items=array_values(array_filter($items, fn($i)=>($i['status']??'active')==='active')); usort($items, fn($a,$b)=>(int)($a['sort_order']??0)<=>(int)($b['sort_order']??0)); return $items; }
+function lines_to_array(mixed $value): array { return array_values(array_filter(array_map('trim', preg_split('/\R/u', (string)$value) ?: []), fn($v)=>$v!=='')); }
 function read_settings(): array
 {
     return array_merge(DEFAULT_SETTINGS, read_json_file(SETTINGS_FILE, DEFAULT_SETTINGS));

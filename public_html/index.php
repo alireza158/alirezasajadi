@@ -3,6 +3,9 @@ declare(strict_types=1);
 require_once __DIR__ . '/admin/admin-config.php';
 $settings = read_settings();
 $landingContent = read_landing_content();
+$cmsContent = read_cms_content();
+$hero = active_sorted($cmsContent['hero'] ?? [])[0] ?? [];
+$seo = active_sorted($cmsContent['seo'] ?? [])[0] ?? [];
 function front_e(mixed $value): string { return htmlspecialchars((string) $value, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8'); }
 function front_json(array $value): string { return json_encode($value, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES | JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) ?: '{}'; }
 function fa_price(mixed $amount): string { return strtr(number_format((int) $amount), ['0'=>'۰','1'=>'۱','2'=>'۲','3'=>'۳','4'=>'۴','5'=>'۵','6'=>'۶','7'=>'۷','8'=>'۸','9'=>'۹',','=>'٬']) . ' تومان'; }
@@ -20,10 +23,10 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
       rel="stylesheet"
     />
     <link rel="icon" type="image/png" href="./favicon.png" />
-    <title><?= front_e(($settings['seo_title'] ?? '') ?: (($settings['course_title'] ?? '') . ' | ' . ($settings['instructor'] ?? ''))) ?></title>
+    <title><?= front_e(($seo['title'] ?? '') ?: (($settings['seo_title'] ?? '') ?: (($settings['course_title'] ?? '') . ' | ' . ($settings['instructor'] ?? '')))) ?></title>
     <meta
       name="description"
-      content="<?= front_e(($settings['meta_description'] ?? '') ?: 'یک مسیر عملی و مرحله‌به‌مرحله برای ساخت لندینگ، سایت شخصی و نمونه‌کار حرفه‌ای با کمک ابزارهای هوشمند.') ?>"
+      content="<?= front_e(($seo['meta_description'] ?? '') ?: (($settings['meta_description'] ?? '') ?: 'یک مسیر عملی و مرحله‌به‌مرحله برای ساخت لندینگ، سایت شخصی و نمونه‌کار حرفه‌ای با کمک ابزارهای هوشمند.')) ?>"
     />
     <meta
       name="keywords"
@@ -33,23 +36,23 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
     <meta property="og:locale" content="fa_IR" />
     <meta
       property="og:title"
-      content="<?= front_e(($settings['seo_title'] ?? '') ?: (($settings['course_title'] ?? '') . ' | ' . ($settings['instructor'] ?? ''))) ?>"
+      content="<?= front_e(($seo['og_title'] ?? '') ?: (($settings['seo_title'] ?? '') ?: (($settings['course_title'] ?? '') . ' | ' . ($settings['instructor'] ?? '')))) ?>"
     />
     <meta
       property="og:description"
-      content="از ایده تا خروجی قابل ارائه؛ طراحی سایت را با مسیر عملی، متن‌های بهتر و چیدمان حرفه‌ای یاد بگیر."
+      content="<?= front_e($seo['og_description'] ?? '') ?>"
     />
     <meta property="og:type" content="website" />
-    <meta property="og:image" content="./assets/instructor-hero-BtbWE4mA.jpg" />
+    <meta property="og:image" content="<?= front_e($seo['og_image'] ?? './assets/instructor-hero-BtbWE4mA.jpg') ?>" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="<?= front_e($settings['course_title'] ?? 'آموزش طراحی سایت با هوش مصنوعی') ?>" />
+    <meta name="twitter:title" content="<?= front_e($seo['twitter_title'] ?? ($settings['course_title'] ?? 'آموزش طراحی سایت با هوش مصنوعی')) ?>" />
     <meta
       name="twitter:description"
-      content="مسیر عملی ساخت سایت و نمونه‌کار با ابزارهای هوشمند."
+      content="<?= front_e($seo['twitter_description'] ?? '') ?>"
     />
     <meta
       name="twitter:image"
-      content="./assets/instructor-hero-BtbWE4mA.jpg"
+      content="<?= front_e($seo['twitter_image'] ?? './assets/instructor-hero-BtbWE4mA.jpg') ?>"
     />
     <link rel="stylesheet" href="./assets/landing.css" />
     <script>window.LANDING_DATA = <?= front_json($landingContent) ?>;</script>
@@ -103,21 +106,18 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
       <section class="hero section" id="home">
         <div class="container hero-grid">
           <div class="hero-copy reveal">
-            <span class="eyebrow">مسیر عملی طراحی سایت با AI</span>
-            <h1>طراحی سایت را سریع‌تر، دقیق‌تر و حرفه‌ای‌تر یاد بگیر</h1>
-            <p class="lead">
-              قدم‌به‌قدم از ایده خام به یک صفحه زیبا و قابل ارائه برس؛ با تمرکز
-              روی چیدمان، متن، تجربه کاربری و اصلاح خروجی.
-            </p>
+            <span class="eyebrow"><?= front_e($hero['eyebrow'] ?? 'مسیر عملی طراحی سایت با AI') ?></span>
+            <h1><?= front_e($hero['title'] ?? 'طراحی سایت را سریع‌تر، دقیق‌تر و حرفه‌ای‌تر یاد بگیر') ?></h1>
+            <p class="lead"><?= front_e($hero['description'] ?? '') ?></p>
             <div class="hero-actions">
               <a class="btn btn-primary" href="#start" aria-label="شروع آموزش" data-open-advisor data-advisor-intent="start"
-                >شروع آموزش</a
+                ><?= front_e($hero['button_1_text'] ?? 'شروع آموزش') ?></a
               >
               <a
                 class="btn btn-ghost"
-                href="#path"
+                href="<?= front_e($hero['button_2_link'] ?? '#path') ?>"
                 aria-label="دیدن مسیر یادگیری"
-                >دیدن مسیر یادگیری</a
+                ><?= front_e($hero['button_2_text'] ?? 'دیدن مسیر یادگیری') ?></a
               >
               <a
                 class="btn btn-ghost"
@@ -125,29 +125,24 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
                 aria-label="مشاوره رایگان"
                 data-open-advisor
                 data-advisor-intent="consultation"
-                >مشاوره رایگان</a
+                ><?= front_e($hero['button_3_text'] ?? 'مشاوره رایگان') ?></a
               >
             </div>
-            <p class="trust-line">
-              بدون حفظ کردن کدهای پیچیده؛ با تمرین عملی و خروجی قابل نمایش
-            </p>
+            <p class="trust-line"><?= front_e($hero['trust_text'] ?? '') ?></p>
             <div class="hero-stats" aria-label="ویژگی‌های دوره">
-              <span>مسیر مرحله‌به‌مرحله</span><span>تمرین‌های کاربردی</span
-              ><span>مناسب شروع جدی</span><span>آماده برای نمونه‌کار</span>
+              <?php foreach (lines_to_array($hero['cards'] ?? '') as $card): ?><span><?= front_e($card) ?></span><?php endforeach; ?>
             </div>
           </div>
           <div class="hero-visual reveal" data-tilt>
             <div class="orb"></div>
             <img
-              src="./assets/instructor-hero-BtbWE4mA.jpg"
+              src="<?= front_e($hero['image'] ?? './assets/instructor-hero-BtbWE4mA.jpg') ?>"
               alt="<?= front_e($settings['instructor'] ?? 'علی‌رضا سجادی') ?> مدرس <?= front_e($settings['course_title'] ?? 'آموزش طراحی سایت با هوش مصنوعی') ?>"
               width="640"
               height="760"
               fetchpriority="high"
             />
-            <div class="float-card code-card">Idea → Page</div>
-            <div class="float-card build-card">نمونه‌کار آماده</div>
-            <div class="float-card smart-card">AI Assistant</div>
+            <?php foreach (lines_to_array($hero['float_cards'] ?? '') as $i => $card): ?><div class="float-card <?= ['code-card','build-card','smart-card'][$i % 3] ?>"><?= front_e($card) ?></div><?php endforeach; ?>
           </div>
         </div>
       </section>
@@ -159,37 +154,13 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
             <h2>چرا یادگیری طراحی سایت برای خیلی‌ها به خروجی نمی‌رسد؟</h2>
           </div>
           <div class="cards three stagger">
+            <?php foreach (active_sorted($cmsContent['challenges'] ?? []) as $challenge): ?>
             <article class="glass-card">
-              <b>۰۱</b>
-              <h3>آموزش‌های پراکنده</h3>
-              <p>
-                ویدئوهای زیادی می‌بینی، اما مسیر مشخصی برای شروع و پایان پروژه
-                نداری.
-              </p>
+              <b><?= front_e($challenge['number'] ?? '') ?></b>
+              <h3><?= front_e($challenge['title'] ?? '') ?></h3>
+              <p><?= front_e($challenge['description'] ?? '') ?></p>
             </article>
-            <article class="glass-card">
-              <b>۰۲</b>
-              <h3>ترس از خطاها</h3>
-              <p>
-                با اولین ارورها متوقف می‌شوی، چون روش تحلیل و اصلاح مرحله‌ای را
-                تمرین نکرده‌ای.
-              </p>
-            </article>
-            <article class="glass-card">
-              <b>۰۳</b>
-              <h3>نبود نمونه‌کار</h3>
-              <p>
-                دانش زمانی ارزشمند می‌شود که به یک خروجی قابل نمایش تبدیل شود.
-              </p>
-            </article>
-            <article class="glass-card">
-              <b>۰۴</b>
-              <h3>سردرگمی بین ابزارها</h3>
-              <p>
-                وقتی معیار انتخاب نداری، هر ابزار تازه می‌تواند تمرکزت را از بین
-                ببرد.
-              </p>
-            </article>
+            <?php endforeach; ?>
           </div>
           <p class="impact reveal">
             اینجا فقط آموزش نمی‌بینی؛ یک مسیر روشن برای ساخت و بهبود خروجی داری.
@@ -210,42 +181,9 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
               </p>
             </div>
             <div class="timeline stagger">
-              <div>
-                <span>۱</span>
-                <h3>تعریف ایده و هدف</h3>
-                <p>مخاطب، پیام اصلی و نتیجه مورد انتظار را مشخص می‌کنی.</p>
-              </div>
-              <div>
-                <span>۲</span>
-                <h3>چیدن ساختار صفحه</h3>
-                <p>
-                  ایده را به بخش‌های خوانا، تیترهای مؤثر و مسیر تبدیل کاربر
-                  تبدیل می‌کنی.
-                </p>
-              </div>
-              <div>
-                <span>۳</span>
-                <h3>ساخت نسخه اولیه</h3>
-                <p>
-                  با دستیار هوشمند، چیدمان و ظاهر پایه را سریع‌تر آماده می‌کنی.
-                </p>
-              </div>
-              <div>
-                <span>۴</span>
-                <h3>بهبود متن و ظاهر</h3>
-                <p>
-                  فاصله‌ها، رنگ، تایپوگرافی و تجربه کاربری را مرحله‌به‌مرحله
-                  بهتر می‌کنی.
-                </p>
-              </div>
-              <div>
-                <span>۵</span>
-                <h3>تحویل خروجی قابل ارائه</h3>
-                <p>
-                  فایل‌ها را مرتب می‌کنی و پروژه را برای نمایش یا نمونه‌کار
-                  آماده می‌سازی.
-                </p>
-              </div>
+              <?php foreach (active_sorted($cmsContent['learning_path'] ?? []) as $step): ?>
+              <div><span><?= front_e($step['number'] ?? '') ?></span><h3><?= front_e($step['title'] ?? '') ?></h3><p><?= front_e($step['description'] ?? '') ?></p></div>
+              <?php endforeach; ?>
             </div>
           </div>
         </div>
@@ -318,7 +256,7 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
         <div class="container instructor-grid">
           <div class="instructor-photo reveal">
             <img
-              src="./assets/instructor-hero-BtbWE4mA.jpg"
+              src="<?= front_e((active_sorted($cmsContent['instructor'] ?? [])[0]['image'] ?? './assets/instructor-hero-BtbWE4mA.jpg')) ?>"
               alt="تصویر <?= front_e($settings['instructor'] ?? 'علی‌رضا سجادی') ?> مدرس دوره"
               width="520"
               height="620"
@@ -327,15 +265,11 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
           </div>
           <div class="reveal">
             <span class="eyebrow">مدرس دوره</span>
-            <h2><?= front_e($settings['instructor'] ?? 'علی‌رضا سجادی') ?>؛ مدرس طراحی سایت با ابزارهای هوشمند</h2>
-            <p>
-              در این دوره، تجربه ساخت صفحات وب را به زبان ساده و عملی یاد
-              می‌گیری. هدف، دیدن چند دستور آماده نیست؛ هدف این است که بتوانی
-              ایده را به ساختار، طراحی و خروجی تمیز تبدیل کنی.
-            </p>
+            <?php $instructorBlock = active_sorted($cmsContent['instructor'] ?? [])[0] ?? []; ?>
+            <h2><?= front_e(($instructorBlock['name'] ?? ($settings['instructor'] ?? 'علی‌رضا سجادی')) . '؛ ' . ($instructorBlock['job_title'] ?? 'مدرس طراحی سایت با ابزارهای هوشمند')) ?></h2>
+            <p><?= front_e(($instructorBlock['short_bio'] ?? '') . ' ' . ($instructorBlock['description'] ?? '')) ?></p>
             <div class="trust-cards">
-              <span>تجربه طراحی وب</span><span>تمرکز روی خروجی قابل ارائه</span
-              ><span>آموزش ساده و کاربردی</span><span>مناسب شروع حرفه‌ای</span>
+              <?php foreach (lines_to_array($instructorBlock['trust_features'] ?? '') as $trust): ?><span><?= front_e($trust) ?></span><?php endforeach; ?>
             </div>
           </div>
         </div>
@@ -378,15 +312,7 @@ function fa_price(mixed $amount): string { return strtr(number_format((int) $amo
               منطق سایت، فرم‌ها، دیتابیس، پنل مدیریت و فرآیندهای سمت سرور.
             </p>
             <div class="course-feature-grid" aria-label="امکانات دوره">
-              <span>آموزش ساده و مرحله‌به‌مرحله</span>
-              <span>شروع از نصب ابزارها و ساخت اولین صفحه</span>
-              <span>ساخت صفحات حرفه‌ای با کمک هوش مصنوعی</span>
-              <span>طراحی سایت واکنش‌گرا برای موبایل و دسکتاپ</span>
-              <span>ساخت سایت کامل‌تر با فرانت‌اند و بک‌اند</span>
-              <span>ساخت فرم‌ها، ثبت اطلاعات و فرآیند خرید</span>
-              <span>آشنایی با ساخت وب‌اپ و نرم‌افزار تحت وب</span>
-              <span>آماده‌سازی خروجی قابل ارائه</span>
-              <span>مناسب برای ساخت نمونه‌کار اولیه و پروژه واقعی</span>
+              <?php foreach (active_sorted($cmsContent['course_features'] ?? []) as $feature): ?><span><?= front_e($feature['title'] ?? '') ?></span><?php endforeach; ?>
             </div>
           </div>
 
