@@ -194,6 +194,8 @@ function createPortfolioLightbox() {
     pointers.clear();
     dragStart = null;
     pinchStart = null;
+    stage.scrollTop = 0;
+    stage.scrollLeft = 0;
     applyTransform();
   }
 
@@ -203,6 +205,10 @@ function createPortfolioLightbox() {
     img.src = src;
     img.alt = itemTitle || "تصویر کامل نمونه‌کار";
     title.textContent = itemTitle || "نمونه‌کار";
+    img.onload = () => {
+      stage.scrollTop = 0;
+      stage.scrollLeft = 0;
+    };
     lightbox.classList.add("open");
     lightbox.setAttribute("aria-hidden", "false");
     document.body.classList.add("portfolio-lightbox-open");
@@ -238,14 +244,20 @@ function createPortfolioLightbox() {
   zoomReset.addEventListener("click", resetZoom);
   stage.addEventListener("dblclick", (event) => setScale(scale > 1 ? 1 : 2.25, event.clientX, event.clientY));
   stage.addEventListener("wheel", (event) => {
+    const shouldZoom = event.ctrlKey || event.metaKey || scale > 1.01;
+    if (!shouldZoom) {
+      return;
+    }
     event.preventDefault();
     setScale(scale + (event.deltaY < 0 ? 0.18 : -0.18), event.clientX, event.clientY);
   }, { passive: false });
 
   stage.addEventListener("pointerdown", (event) => {
     if (!lightbox.classList.contains("open")) return;
-    stage.setPointerCapture(event.pointerId);
     pointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (scale > 1 || pointers.size > 1) {
+      stage.setPointerCapture(event.pointerId);
+    }
     if (pointers.size === 1 && scale > 1) {
       dragStart = { x: event.clientX, y: event.clientY, translateX, translateY };
     }
