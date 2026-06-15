@@ -2311,3 +2311,4 @@ html.advisor-open.register-modal-open {
     padding: 0 14px 10px !important;
   }
 }
+.project-card>img{width:100%;height:180px;object-fit:cover;border-radius:24px;border:1px solid rgba(255,255,255,.12);margin-bottom:18px;box-shadow:0 18px 40px rgba(0,0,0,.18)}.testimonial-avatar:is(img){object-fit:cover}
