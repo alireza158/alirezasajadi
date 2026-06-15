@@ -1,192 +1,104 @@
-const features = [
-  ["🧩", "ساختاردهی صفحات وب"],
-  ["📝", "نوشتن درخواست‌های دقیق"],
-  ["💡", "تبدیل ایده به طرح صفحه"],
-  ["🎨", "طراحی رابط کاربری تمیز"],
-  ["📱", "چیدمان واکنش‌گرا"],
-  ["✨", "بهبود ظاهر و متن"],
-  ["🛠️", "تحلیل و رفع خطا"],
-  ["🗂️", "مدیریت فایل‌های پروژه"],
-  ["🚀", "آماده‌سازی خروجی"],
-  ["📦", "ساخت نمونه‌کار اولیه"],
-];
-
-const projects = [
-  [
-    "لندینگ حرفه‌ای معرفی محصول",
-    "یک صفحه معرفی تمیز با پیام روشن، مزایا، اعتمادسازی و دعوت به اقدام.",
-    ["لندینگ", "فروش", "تبدیل"],
-  ],
-  [
-    "سایت شخصی یا آموزشی",
-    "ساختاری منظم برای معرفی تخصص، آموزش‌ها، نمونه‌کارها و مسیر ارتباط.",
-    ["برند شخصی", "آموزش", "اعتماد"],
-  ],
-  [
-    "صفحه فروش دوره یا خدمات",
-    "صفحه‌ای فروش‌محور با تمرکز روی نیاز مخاطب، مزیت‌ها و ثبت‌نام.",
-    ["فروش", "CTA", "محتوا"],
-  ],
-  [
-    "پروژه کامل‌تر با ساختار چندصفحه‌ای",
-    "تمرین یک تجربه کامل‌تر با چند صفحه، مسیر کاربر و خروجی قابل ارائه.",
-    ["چندصفحه‌ای", "مسیر کاربر", "نمونه‌کار"],
-  ],
-];
-
-const audience = [
-  "افراد مبتدی که دنبال مسیر روشن هستند",
-  "صاحبان کسب‌وکار",
-  "تولیدکنندگان محتوا",
-  "مدرس‌ها و مشاورها",
-  "فریلنسرهای تازه‌کار",
-  "طراحانی که می‌خواهند سریع‌تر خروجی بگیرند",
-];
-
-const curriculum = [
-  [
-    "فصل ۱: شروع مسیر",
-    "آشنایی با ذهنیت عملی، ابزارها و برنامه ساخت اولین خروجی.",
-  ],
-  [
-    "فصل ۲: تبدیل ایده به ساختار",
-    "تبدیل ایده خام به بخش‌های صفحه، پیام اصلی و مسیر حرکت کاربر.",
-  ],
-  [
-    "فصل ۳: نوشتن درخواست‌های دقیق",
-    "یادگیری روش توضیح نیازها برای گرفتن خروجی کاربردی و قابل اصلاح.",
-  ],
-  [
-    "فصل ۴: ساخت صفحه اصلی مدرن",
-    "طراحی یک صفحه حرفه‌ای با تمرکز روی چیدمان، پیام و دکمه‌ها.",
-  ],
-  [
-    "فصل ۵: حرفه‌ای‌سازی ظاهر",
-    "بهبود تایپوگرافی، رنگ، فاصله‌گذاری، کارت‌ها و حس بصری.",
-  ],
-  [
-    "فصل ۶: ریسپانسیو کردن صفحات",
-    "آماده‌سازی ظاهر برای موبایل، تبلت و دسکتاپ با تجربه کاربری تمیز.",
-  ],
-  [
-    "فصل ۷: تحلیل و رفع خطاها",
-    "تشخیص مشکل، توضیح درست ایراد و اصلاح مرحله‌به‌مرحله.",
-  ],
-  [
-    "فصل ۸: ساخت پروژه چندبخشی",
-    "ترکیب چند صفحه و بخش کاربردی برای خروجی کامل‌تر.",
-  ],
-  [
-    "فصل ۹: آماده‌سازی نمونه‌کار",
-    "مرتب‌سازی فایل‌ها، کنترل کیفیت و آماده‌سازی پروژه برای نمایش.",
-  ],
-];
-
-const results = [
-  "می‌توانی یک صفحه کامل طراحی کنی",
-  "می‌توانی خروجی را سریع‌تر اصلاح کنی",
-  "می‌توانی خطاها را بهتر تحلیل کنی",
-  "می‌توانی نمونه‌کار اولیه بسازی",
-  "می‌توانی برای پروژه‌های کوچک آماده شوی",
-];
-
-const testimonials = [
-  "قبل از این دوره فکر می‌کردم شروع طراحی سایت سخت است؛ اما مسیر مرحله‌به‌مرحله کمک کرد خروجی قابل دیدن بسازم.",
-  "بالاخره از تماشای آموزش‌های پراکنده خارج شدم و فهمیدم چطور ایده را به صفحه قابل ارائه تبدیل کنم.",
-  "آموزش منظم بود و سردرگم نشدم؛ مخصوصاً بخش اصلاح خطاها برایم خیلی کاربردی بود.",
-];
-
-const faqs = [
-  [
-    "آیا باید برنامه‌نویسی بلد باشم؟",
-    "نه. مسیر برای شروع طراحی شده و مفاهیم لازم را هنگام ساخت تمرین می‌کنی.",
-  ],
-  [
-    "آیا این آموزش فقط معرفی ابزار است؟",
-    "نه. تمرکز اصلی روی تصمیم‌گیری، ساخت خروجی و اصلاح مرحله‌به‌مرحله است.",
-  ],
-  [
-    "آیا خروجی قابل ارائه ساخته می‌شود؟",
-    "بله. چند مدل صفحه می‌سازی تا یادگیری فقط در حد تئوری نماند.",
-  ],
-  [
-    "آیا AI جای یادگیری را می‌گیرد؟",
-    "نه. ابزارها نقش دستیار دارند؛ تو یاد می‌گیری چطور هدایت، بررسی و بهترشان کنی.",
-  ],
-  [
-    "آیا برای شروع مناسب است؟",
-    "بله. اگر از مسیرهای پراکنده خسته شده‌ای، این دوره یک نقشه ساده و عملی می‌دهد.",
-  ],
-  [
-    "آیا می‌توانم نمونه‌کار بسازم؟",
-    "بله. هدف نهایی این است که از ایده به خروجی قابل نمایش و نمونه‌کار اولیه برسی.",
-  ],
-];
+const LANDING_DATA = window.LANDING_DATA || {};
+const activeItems = (key) => (Array.isArray(LANDING_DATA[key]) ? LANDING_DATA[key] : [])
+  .filter((item) => !item || (item.status !== "inactive" && item.show_home !== false))
+  .sort((a, b) => (Number(a?.sort_order || 0) - Number(b?.sort_order || 0)));
+const normalizePair = (item) => Array.isArray(item) ? { title: item[0] || "", description: item[1] || "" } : (item || {});
+const features = activeItems("features");
+const projects = activeItems("projects");
+const audience = activeItems("audience");
+const curriculum = activeItems("curriculum");
+const results = activeItems("results");
+const testimonials = activeItems("testimonials");
+const faqs = activeItems("faqs");
 
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 
-function createFeatureCard(icon, title) {
+function createFeatureCard(item) {
+  const feature = Array.isArray(item) ? { icon: item[0], title: item[1] } : item;
   return `
     <article class="glass-card">
-      <span class="feature-icon">${icon}</span>
-      <h3>${title}</h3>
-      <p>این مهارت را هنگام ساخت و اصلاح خروجی تمرین می‌کنی، نه فقط با تماشای آموزش.</p>
+      <span class="feature-icon">${feature.icon || "✦"}</span>
+      <h3>${feature.title || ""}</h3>
+      <p>${feature.description || "این مهارت را هنگام ساخت و اصلاح خروجی تمرین می‌کنی، نه فقط با تماشای آموزش."}</p>
     </article>
   `;
 }
 
 $("[data-feature-grid]").innerHTML = features
-  .map((feature) => createFeatureCard(...feature))
+  .map((feature) => createFeatureCard(feature))
   .join("");
 
 $("[data-project-grid]").innerHTML = projects
   .map(
-    (project) => `
+    (project) => {
+      const item = Array.isArray(project) ? { title: project[0], description: project[1], tags: project[2] || [], link: "#curriculum", button_text: "مشاهده دوره ←" } : project;
+      const imageMarkup = item.image
+        ? `<img src="${item.image}" alt="${item.title || "نمونه‌کار"}" loading="lazy" />`
+        : `<div class="project-card-placeholder" aria-hidden="true"><span></span><span></span><span></span></div>`;
+      return `
       <article class="project-card">
-        <div class="project-mock" aria-hidden="true">
-          <span></span><span style="width:72%"></span><span style="width:58%"></span>
+        <a class="project-card-image" href="${item.link || "#curriculum"}" aria-label="${item.title || "مشاهده نمونه‌کار"}">
+          ${imageMarkup}
+        </a>
+        <div class="project-card-body">
+          <h3>${item.title || ""}</h3>
+          <p>${item.description || ""}</p>
+          <div class="project-tags">${(item.tags || []).slice(0, 5).map((tag) => `<span>${tag}</span>`).join("")}</div>
         </div>
-        <h3>${project[0]}</h3>
-        <p>${project[1]}</p>
-        <div class="tags">${project[2].map((tag) => `<span>${tag}</span>`).join("")}</div>
-        <a class="link-btn" href="#curriculum" data-open-advisor data-advisor-intent="course">مشاهده دوره ←</a>
+        <a class="project-link" href="${item.link || "#curriculum"}" data-open-advisor data-advisor-intent="course">
+          <span>${item.button_text || "مشاهده پروژه"}</span><i aria-hidden="true">←</i>
+        </a>
       </article>
-    `,
+    `;
+    },
   )
   .join("");
 
 $("[data-audience-grid]").innerHTML = audience
   .map(
-    (item, index) => `
+    (rawItem, index) => {
+      const item = typeof rawItem === "string" ? { title: rawItem } : rawItem;
+      return `
       <article class="glass-card">
-        <span class="feature-icon">${index + 1}</span>
-        <h3>${item}</h3>
+        <span class="feature-icon">${item.icon || index + 1}</span>
+        <h3>${item.title || ""}</h3>
+        ${item.description ? `<p>${item.description}</p>` : ""}
       </article>
-    `,
+    `;
+    },
   )
   .join("");
 
 $("[data-results-grid]").innerHTML = results
   .map(
-    (item) => `
+    (rawItem) => {
+      const item = typeof rawItem === "string" ? { title: rawItem, icon: "✓" } : rawItem;
+      return `
       <article class="glass-card">
-        <span class="feature-icon">✓</span>
-        <h3>${item}</h3>
+        <span class="feature-icon">${item.icon || "✓"}</span>
+        <h3>${item.title || ""}</h3>
+        ${item.description ? `<p>${item.description}</p>` : ""}
       </article>
-    `,
+    `;
+    },
   )
   .join("");
 
 $("[data-testimonials]").innerHTML = testimonials
   .map(
-    (item, index) => `
+    (rawItem, index) => {
+      const item = typeof rawItem === "string" ? { description: rawItem, title: `هنرجوی دوره ${index + 1}` } : rawItem;
+      const avatar = item.image ? `<img class="testimonial-avatar" src="${item.image}" alt="${item.title || "هنرجوی دوره"}" loading="lazy" />` : `<div class="testimonial-avatar" aria-hidden="true"></div>`;
+      return `
       <article class="glass-card">
-        <div class="testimonial-avatar" aria-hidden="true"></div>
-        <p>«${item}»</p>
-        <strong>هنرجوی دوره ${index + 1}</strong>
+        ${avatar}
+        <p>«${item.description || ""}»</p>
+        <strong>${item.title || `هنرجوی دوره ${index + 1}`}</strong>
+        ${item.subtitle ? `<small>${item.subtitle}</small>` : ""}
       </article>
-    `,
+    `;
+    },
   )
   .join("");
 
@@ -196,9 +108,9 @@ function renderAccordion(items, root) {
       (item, index) => `
         <article class="accordion-item ${index === 0 ? "open" : ""}">
           <button class="accordion-button" type="button" aria-expanded="${index === 0}">
-            ${item[0]}<span aria-hidden="true">+</span>
+            ${normalizePair(item).title}<span aria-hidden="true">+</span>
           </button>
-          <div class="accordion-panel"><div><p>${item[1]}</p></div></div>
+          <div class="accordion-panel"><div><p>${normalizePair(item).description}</p></div></div>
         </article>
       `,
     )

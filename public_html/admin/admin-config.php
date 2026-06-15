@@ -19,6 +19,7 @@ const DATA_DIR = __DIR__ . '/../data';
 
 const ORDERS_FILE = DATA_DIR . '/orders.json';
 const SETTINGS_FILE = DATA_DIR . '/settings.json';
+const LANDING_CONTENT_FILE = DATA_DIR . '/landing-content.json';
 
 /**
  * مسیر داده‌های سرویس Node.js مشاور هوشمند
@@ -41,6 +42,8 @@ const DEFAULT_SETTINGS = [
     'site_return_url' => 'https://alirezasajadi.ir/',
     'merchant_id' => '0babc2f6-e2e7-43db-a75c-35ba6fb361a9',
     'callback_url' => 'https://alirezasajadi.ir/verify.php',
+    'seo_title' => 'آموزش طراحی سایت با هوش مصنوعی | علی‌رضا سجادی',
+    'meta_description' => 'یک مسیر عملی و مرحله‌به‌مرحله برای ساخت لندینگ، سایت شخصی و نمونه‌کار حرفه‌ای با کمک ابزارهای هوشمند.',
 ];
 
 require_once __DIR__ . '/admin-functions.php';
