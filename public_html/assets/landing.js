@@ -1,6 +1,6 @@
 const LANDING_DATA = window.LANDING_DATA || {};
 const activeItems = (key) => (Array.isArray(LANDING_DATA[key]) ? LANDING_DATA[key] : [])
-  .filter((item) => !item || item.status !== "inactive")
+  .filter((item) => !item || (item.status !== "inactive" && item.show_home !== false))
   .sort((a, b) => (Number(a?.sort_order || 0) - Number(b?.sort_order || 0)));
 const normalizePair = (item) => Array.isArray(item) ? { title: item[0] || "", description: item[1] || "" } : (item || {});
 const features = activeItems("features");
@@ -35,14 +35,20 @@ $("[data-project-grid]").innerHTML = projects
       const item = Array.isArray(project) ? { title: project[0], description: project[1], tags: project[2] || [], link: "#curriculum", button_text: "مشاهده دوره ←" } : project;
       const imageMarkup = item.image
         ? `<img src="${item.image}" alt="${item.title || "نمونه‌کار"}" loading="lazy" />`
-        : `<div class="project-mock" aria-hidden="true"><span></span><span style="width:72%"></span><span style="width:58%"></span></div>`;
+        : `<div class="project-card-placeholder" aria-hidden="true"><span></span><span></span><span></span></div>`;
       return `
       <article class="project-card">
-        ${imageMarkup}
-        <h3>${item.title || ""}</h3>
-        <p>${item.description || ""}</p>
-        <div class="tags">${(item.tags || []).map((tag) => `<span>${tag}</span>`).join("")}</div>
-        <a class="link-btn" href="${item.link || "#curriculum"}" data-open-advisor data-advisor-intent="course">${item.button_text || "مشاهده دوره ←"}</a>
+        <a class="project-card-image" href="${item.link || "#curriculum"}" aria-label="${item.title || "مشاهده نمونه‌کار"}">
+          ${imageMarkup}
+        </a>
+        <div class="project-card-body">
+          <h3>${item.title || ""}</h3>
+          <p>${item.description || ""}</p>
+          <div class="project-tags">${(item.tags || []).slice(0, 5).map((tag) => `<span>${tag}</span>`).join("")}</div>
+        </div>
+        <a class="project-link" href="${item.link || "#curriculum"}" data-open-advisor data-advisor-intent="course">
+          <span>${item.button_text || "مشاهده پروژه"}</span><i aria-hidden="true">←</i>
+        </a>
       </article>
     `;
     },

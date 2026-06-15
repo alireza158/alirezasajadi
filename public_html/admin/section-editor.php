@@ -30,12 +30,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $uploaded = save_uploaded_media($_FILES['image_file'], $errors);
         if ($uploaded !== '') $image = $uploaded;
     }
+    $gallery = array_values(array_filter(array_map(fn($v) => clean_text($v, 500), preg_split('/\R/u', (string)($_POST['existing_gallery'] ?? '')) ?: [])));
+    if (!empty($_FILES['gallery_files']['name']) && is_array($_FILES['gallery_files']['name'])) {
+        foreach ($_FILES['gallery_files']['name'] as $index => $name) {
+            $file = [
+                'name' => $name,
+                'type' => $_FILES['gallery_files']['type'][$index] ?? '',
+                'tmp_name' => $_FILES['gallery_files']['tmp_name'][$index] ?? '',
+                'error' => $_FILES['gallery_files']['error'][$index] ?? UPLOAD_ERR_NO_FILE,
+                'size' => $_FILES['gallery_files']['size'][$index] ?? 0,
+            ];
+            $uploaded = save_uploaded_media($file, $errors);
+            if ($uploaded !== '') $gallery[] = $uploaded;
+        }
+    }
     $item = [
         'id' => $id ?: ('item-' . bin2hex(random_bytes(5))),
         'title' => clean_text($_POST['title'] ?? '', 240),
         'description' => clean_text($_POST['description'] ?? '', 2000),
+        'full_description' => clean_text($_POST['full_description'] ?? '', 5000),
         'icon' => clean_text($_POST['icon'] ?? '', 80),
         'image' => $image,
+        'gallery' => $gallery,
         'link' => clean_text($_POST['link'] ?? '', 500),
         'button_text' => clean_text($_POST['button_text'] ?? '', 120),
         'tags' => array_values(array_filter(array_map(fn($v) => clean_text($v, 60), preg_split('/[,،\n]+/u', (string)($_POST['tags'] ?? '')) ?: []))),
@@ -44,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'subtitle' => clean_text($_POST['subtitle'] ?? '', 180),
         'rating' => clean_text($_POST['rating'] ?? '', 20),
         'category' => clean_text($_POST['category'] ?? '', 120),
+        'show_home' => isset($_POST['show_home']),
         'sort_order' => (int) clean_text($_POST['sort_order'] ?? '0', 20),
         'status' => in_array(($_POST['status'] ?? 'active'), ['active', 'inactive'], true) ? $_POST['status'] : 'active',
     ];
@@ -66,7 +83,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 $editId = clean_text($_GET['edit'] ?? '', 80);
 $editing = null;
 foreach ($items as $item) if (($item['id'] ?? '') === $editId) $editing = $item;
-$empty = ['id'=>'','title'=>'','description'=>'','icon'=>'','image'=>'','link'=>'','button_text'=>'','tags'=>[],'lessons'=>[],'duration'=>'','subtitle'=>'','rating'=>'','category'=>'','sort_order'=>count($items)+1,'status'=>'active'];
+$empty = ['id'=>'','title'=>'','description'=>'','icon'=>'','image'=>'','gallery'=>[],'link'=>'','button_text'=>'','tags'=>[],'lessons'=>[],'full_description'=>'','duration'=>'','subtitle'=>'','rating'=>'','category'=>'','show_home'=>true,'sort_order'=>count($items)+1,'status'=>'active'];
 $form = array_merge($empty, $editing ?: []);
 admin_header('مدیریت ' . $config['label']);
 ?>
@@ -79,10 +96,12 @@ admin_header('مدیریت ' . $config['label']);
         <input type="hidden" name="id" value="<?= e($form['id']) ?>">
         <input type="hidden" name="existing_image" value="<?= e($form['image']) ?>">
         <div class="col-12"><label class="form-label">عنوان</label><input class="form-control" name="title" value="<?= e($form['title']) ?>" required></div>
-        <div class="col-12"><label class="form-label">توضیح / پاسخ</label><textarea class="form-control" name="description" rows="4"><?= e($form['description']) ?></textarea></div>
+        <div class="col-12"><label class="form-label">توضیح کوتاه / پاسخ</label><textarea class="form-control" name="description" rows="3"><?= e($form['description']) ?></textarea></div>
+        <div class="col-12"><label class="form-label">توضیح کامل</label><textarea class="form-control" name="full_description" rows="4"><?= e($form['full_description'] ?? '') ?></textarea></div>
         <div class="col-12 col-md-6"><label class="form-label">آیکون / شماره</label><input class="form-control" name="icon" value="<?= e($form['icon']) ?>"></div>
         <div class="col-12 col-md-6"><label class="form-label">ترتیب نمایش</label><input class="form-control ltr" name="sort_order" inputmode="numeric" value="<?= e($form['sort_order']) ?>"></div>
-        <div class="col-12"><label class="form-label">تصویر</label><input class="form-control" type="file" name="image_file" accept="image/*"><?php if ($form['image']): ?><img class="admin-thumb mt-2" src="../<?= e(ltrim((string)$form['image'], './')) ?>" alt=""><?php endif; ?></div>
+        <div class="col-12"><label class="form-label">تصویر شاخص</label><input class="form-control" type="file" name="image_file" accept="image/*"><?php if ($form['image']): ?><img class="admin-thumb mt-2" src="../<?= e(ltrim((string)$form['image'], './')) ?>" alt=""><?php endif; ?></div>
+        <div class="col-12"><label class="form-label">گالری تصاویر</label><input class="form-control" type="file" name="gallery_files[]" accept="image/*" multiple><textarea class="form-control ltr mt-2" dir="ltr" name="existing_gallery" rows="3" placeholder="مسیر تصاویر گالری، هر خط یک تصویر"><?= e(implode("\n", (array)($form['gallery'] ?? []))) ?></textarea></div>
         <div class="col-12 col-md-6"><label class="form-label">متن دکمه</label><input class="form-control" name="button_text" value="<?= e($form['button_text']) ?>"></div>
         <div class="col-12 col-md-6"><label class="form-label">لینک</label><input class="form-control ltr" name="link" value="<?= e($form['link']) ?>"></div>
         <div class="col-12"><label class="form-label">تگ‌ها (با کاما یا خط جدید)</label><textarea class="form-control" name="tags" rows="2"><?= e(implode("\n", (array)$form['tags'])) ?></textarea></div>
@@ -90,8 +109,9 @@ admin_header('مدیریت ' . $config['label']);
         <div class="col-12 col-md-4"><label class="form-label">مدت/زیرعنوان</label><input class="form-control" name="duration" value="<?= e($form['duration']) ?>"></div>
         <div class="col-12 col-md-4"><label class="form-label">سمت هنرجو</label><input class="form-control" name="subtitle" value="<?= e($form['subtitle']) ?>"></div>
         <div class="col-12 col-md-4"><label class="form-label">امتیاز/دسته</label><input class="form-control" name="rating" value="<?= e($form['rating']) ?>"></div>
-        <div class="col-12 col-md-6"><label class="form-label">دسته‌بندی FAQ</label><input class="form-control" name="category" value="<?= e($form['category']) ?>"></div>
+        <div class="col-12 col-md-6"><label class="form-label">دسته‌بندی</label><input class="form-control" name="category" value="<?= e($form['category']) ?>"></div>
         <div class="col-12 col-md-6"><label class="form-label">وضعیت</label><select class="form-select" name="status"><option value="active" <?= $form['status']==='active'?'selected':'' ?>>فعال</option><option value="inactive" <?= $form['status']==='inactive'?'selected':'' ?>>غیرفعال</option></select></div>
+        <div class="col-12"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="show_home" name="show_home" <?= !empty($form['show_home']) ? 'checked' : '' ?>><label class="form-check-label" for="show_home">نمایش در صفحه اصلی</label></div></div>
         <div class="col-12"><button class="btn btn-primary btn-lg" type="submit"><i class="bi bi-save"></i> ذخیره</button></div>
       </form>
     </section>
