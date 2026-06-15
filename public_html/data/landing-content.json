@@ -1,166 +1,763 @@
 {
-  "features": [
-    [
-      "🧩",
-      "ساختاردهی صفحات وب"
+    "features": [
+        {
+            "id": "item-1",
+            "title": "ساختاردهی صفحات وب",
+            "description": "",
+            "icon": "🧩",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 1,
+            "status": "active"
+        },
+        {
+            "id": "item-2",
+            "title": "نوشتن درخواست‌های دقیق",
+            "description": "",
+            "icon": "📝",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 2,
+            "status": "active"
+        },
+        {
+            "id": "item-3",
+            "title": "تبدیل ایده به طرح صفحه",
+            "description": "",
+            "icon": "💡",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 3,
+            "status": "active"
+        },
+        {
+            "id": "item-4",
+            "title": "طراحی رابط کاربری تمیز",
+            "description": "",
+            "icon": "🎨",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 4,
+            "status": "active"
+        },
+        {
+            "id": "item-5",
+            "title": "چیدمان واکنش‌گرا",
+            "description": "",
+            "icon": "📱",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 5,
+            "status": "active"
+        },
+        {
+            "id": "item-6",
+            "title": "بهبود ظاهر و متن",
+            "description": "",
+            "icon": "✨",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 6,
+            "status": "active"
+        },
+        {
+            "id": "item-7",
+            "title": "تحلیل و رفع خطا",
+            "description": "",
+            "icon": "🛠️",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 7,
+            "status": "active"
+        },
+        {
+            "id": "item-8",
+            "title": "مدیریت فایل‌های پروژه",
+            "description": "",
+            "icon": "🗂️",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 8,
+            "status": "active"
+        },
+        {
+            "id": "item-9",
+            "title": "آماده‌سازی خروجی",
+            "description": "",
+            "icon": "🚀",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 9,
+            "status": "active"
+        },
+        {
+            "id": "item-10",
+            "title": "ساخت نمونه‌کار اولیه",
+            "description": "",
+            "icon": "📦",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 10,
+            "status": "active"
+        }
     ],
-    [
-      "📝",
-      "نوشتن درخواست‌های دقیق"
+    "projects": [
+        {
+            "id": "item-1",
+            "title": "لندینگ حرفه‌ای معرفی محصول",
+            "description": "یک صفحه معرفی تمیز با پیام روشن، مزایا، اعتمادسازی و دعوت به اقدام.",
+            "icon": "",
+            "image": "",
+            "link": "#curriculum",
+            "button_text": "مشاهده دوره ←",
+            "tags": [
+                "لندینگ",
+                "فروش",
+                "تبدیل"
+            ],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 1,
+            "status": "active"
+        },
+        {
+            "id": "item-2",
+            "title": "سایت شخصی یا آموزشی",
+            "description": "ساختاری منظم برای معرفی تخصص، آموزش‌ها، نمونه‌کارها و مسیر ارتباط.",
+            "icon": "",
+            "image": "",
+            "link": "#curriculum",
+            "button_text": "مشاهده دوره ←",
+            "tags": [
+                "برند شخصی",
+                "آموزش",
+                "اعتماد"
+            ],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 2,
+            "status": "active"
+        },
+        {
+            "id": "item-3",
+            "title": "صفحه فروش دوره یا خدمات",
+            "description": "صفحه‌ای فروش‌محور با تمرکز روی نیاز مخاطب، مزیت‌ها و ثبت‌نام.",
+            "icon": "",
+            "image": "",
+            "link": "#curriculum",
+            "button_text": "مشاهده دوره ←",
+            "tags": [
+                "فروش",
+                "CTA",
+                "محتوا"
+            ],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 3,
+            "status": "active"
+        },
+        {
+            "id": "item-4",
+            "title": "پروژه کامل‌تر با ساختار چندصفحه‌ای",
+            "description": "تمرین یک تجربه کامل‌تر با چند صفحه، مسیر کاربر و خروجی قابل ارائه.",
+            "icon": "",
+            "image": "",
+            "link": "#curriculum",
+            "button_text": "مشاهده دوره ←",
+            "tags": [
+                "چندصفحه‌ای",
+                "مسیر کاربر",
+                "نمونه‌کار"
+            ],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 4,
+            "status": "active"
+        }
     ],
-    [
-      "💡",
-      "تبدیل ایده به طرح صفحه"
+    "audience": [
+        {
+            "id": "item-1",
+            "title": "افراد مبتدی که دنبال مسیر روشن هستند",
+            "description": "",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 1,
+            "status": "active"
+        },
+        {
+            "id": "item-2",
+            "title": "صاحبان کسب‌وکار",
+            "description": "",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 2,
+            "status": "active"
+        },
+        {
+            "id": "item-3",
+            "title": "تولیدکنندگان محتوا",
+            "description": "",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 3,
+            "status": "active"
+        },
+        {
+            "id": "item-4",
+            "title": "مدرس‌ها و مشاورها",
+            "description": "",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 4,
+            "status": "active"
+        },
+        {
+            "id": "item-5",
+            "title": "فریلنسرهای تازه‌کار",
+            "description": "",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 5,
+            "status": "active"
+        },
+        {
+            "id": "item-6",
+            "title": "طراحانی که می‌خواهند سریع‌تر خروجی بگیرند",
+            "description": "",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 6,
+            "status": "active"
+        }
     ],
-    [
-      "🎨",
-      "طراحی رابط کاربری تمیز"
+    "curriculum": [
+        {
+            "id": "item-1",
+            "title": "فصل ۱: شروع مسیر",
+            "description": "آشنایی با ذهنیت عملی، ابزارها و برنامه ساخت اولین خروجی.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 1,
+            "status": "active"
+        },
+        {
+            "id": "item-2",
+            "title": "فصل ۲: تبدیل ایده به ساختار",
+            "description": "تبدیل ایده خام به بخش‌های صفحه، پیام اصلی و مسیر حرکت کاربر.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 2,
+            "status": "active"
+        },
+        {
+            "id": "item-3",
+            "title": "فصل ۳: نوشتن درخواست‌های دقیق",
+            "description": "یادگیری روش توضیح نیازها برای گرفتن خروجی کاربردی و قابل اصلاح.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 3,
+            "status": "active"
+        },
+        {
+            "id": "item-4",
+            "title": "فصل ۴: ساخت صفحه اصلی مدرن",
+            "description": "طراحی یک صفحه حرفه‌ای با تمرکز روی چیدمان، پیام و دکمه‌ها.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 4,
+            "status": "active"
+        },
+        {
+            "id": "item-5",
+            "title": "فصل ۵: حرفه‌ای‌سازی ظاهر",
+            "description": "بهبود تایپوگرافی، رنگ، فاصله‌گذاری، کارت‌ها و حس بصری.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 5,
+            "status": "active"
+        },
+        {
+            "id": "item-6",
+            "title": "فصل ۶: ریسپانسیو کردن صفحات",
+            "description": "آماده‌سازی ظاهر برای موبایل، تبلت و دسکتاپ با تجربه کاربری تمیز.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 6,
+            "status": "active"
+        },
+        {
+            "id": "item-7",
+            "title": "فصل ۷: تحلیل و رفع خطاها",
+            "description": "تشخیص مشکل، توضیح درست ایراد و اصلاح مرحله‌به‌مرحله.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 7,
+            "status": "active"
+        },
+        {
+            "id": "item-8",
+            "title": "فصل ۸: ساخت پروژه چندبخشی",
+            "description": "ترکیب چند صفحه و بخش کاربردی برای خروجی کامل‌تر.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 8,
+            "status": "active"
+        },
+        {
+            "id": "item-9",
+            "title": "فصل ۹: آماده‌سازی نمونه‌کار",
+            "description": "مرتب‌سازی فایل‌ها، کنترل کیفیت و آماده‌سازی پروژه برای نمایش.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 9,
+            "status": "active"
+        }
     ],
-    [
-      "📱",
-      "چیدمان واکنش‌گرا"
+    "results": [
+        {
+            "id": "item-1",
+            "title": "می‌توانی یک صفحه کامل طراحی کنی",
+            "description": "",
+            "icon": "✓",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 1,
+            "status": "active"
+        },
+        {
+            "id": "item-2",
+            "title": "می‌توانی خروجی را سریع‌تر اصلاح کنی",
+            "description": "",
+            "icon": "✓",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 2,
+            "status": "active"
+        },
+        {
+            "id": "item-3",
+            "title": "می‌توانی خطاها را بهتر تحلیل کنی",
+            "description": "",
+            "icon": "✓",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 3,
+            "status": "active"
+        },
+        {
+            "id": "item-4",
+            "title": "می‌توانی نمونه‌کار اولیه بسازی",
+            "description": "",
+            "icon": "✓",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 4,
+            "status": "active"
+        },
+        {
+            "id": "item-5",
+            "title": "می‌توانی برای پروژه‌های کوچک آماده شوی",
+            "description": "",
+            "icon": "✓",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 5,
+            "status": "active"
+        }
     ],
-    [
-      "✨",
-      "بهبود ظاهر و متن"
+    "testimonials": [
+        {
+            "id": "item-1",
+            "title": "هنرجوی دوره 1",
+            "description": "قبل از این دوره فکر می‌کردم شروع طراحی سایت سخت است؛ اما مسیر مرحله‌به‌مرحله کمک کرد خروجی قابل دیدن بسازم.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 1,
+            "status": "active"
+        },
+        {
+            "id": "item-2",
+            "title": "هنرجوی دوره 2",
+            "description": "بالاخره از تماشای آموزش‌های پراکنده خارج شدم و فهمیدم چطور ایده را به صفحه قابل ارائه تبدیل کنم.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 2,
+            "status": "active"
+        },
+        {
+            "id": "item-3",
+            "title": "هنرجوی دوره 3",
+            "description": "آموزش منظم بود و سردرگم نشدم؛ مخصوصاً بخش اصلاح خطاها برایم خیلی کاربردی بود.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 3,
+            "status": "active"
+        }
     ],
-    [
-      "🛠️",
-      "تحلیل و رفع خطا"
-    ],
-    [
-      "🗂️",
-      "مدیریت فایل‌های پروژه"
-    ],
-    [
-      "🚀",
-      "آماده‌سازی خروجی"
-    ],
-    [
-      "📦",
-      "ساخت نمونه‌کار اولیه"
+    "faqs": [
+        {
+            "id": "item-1",
+            "title": "آیا باید برنامه‌نویسی بلد باشم؟",
+            "description": "نه. مسیر برای شروع طراحی شده و مفاهیم لازم را هنگام ساخت تمرین می‌کنی.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 1,
+            "status": "active"
+        },
+        {
+            "id": "item-2",
+            "title": "آیا این آموزش فقط معرفی ابزار است؟",
+            "description": "نه. تمرکز اصلی روی تصمیم‌گیری، ساخت خروجی و اصلاح مرحله‌به‌مرحله است.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 2,
+            "status": "active"
+        },
+        {
+            "id": "item-3",
+            "title": "آیا خروجی قابل ارائه ساخته می‌شود؟",
+            "description": "بله. چند مدل صفحه می‌سازی تا یادگیری فقط در حد تئوری نماند.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 3,
+            "status": "active"
+        },
+        {
+            "id": "item-4",
+            "title": "آیا AI جای یادگیری را می‌گیرد؟",
+            "description": "نه. ابزارها نقش دستیار دارند؛ تو یاد می‌گیری چطور هدایت، بررسی و بهترشان کنی.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 4,
+            "status": "active"
+        },
+        {
+            "id": "item-5",
+            "title": "آیا برای شروع مناسب است؟",
+            "description": "بله. اگر از مسیرهای پراکنده خسته شده‌ای، این دوره یک نقشه ساده و عملی می‌دهد.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 5,
+            "status": "active"
+        },
+        {
+            "id": "item-6",
+            "title": "آیا می‌توانم نمونه‌کار بسازم؟",
+            "description": "بله. هدف نهایی این است که از ایده به خروجی قابل نمایش و نمونه‌کار اولیه برسی.",
+            "icon": "",
+            "image": "",
+            "link": "",
+            "button_text": "",
+            "tags": [],
+            "lessons": [],
+            "duration": "",
+            "subtitle": "",
+            "rating": "",
+            "category": "",
+            "sort_order": 6,
+            "status": "active"
+        }
     ]
-  ],
-  "projects": [
-    [
-      "لندینگ حرفه‌ای معرفی محصول",
-      "یک صفحه معرفی تمیز با پیام روشن، مزایا، اعتمادسازی و دعوت به اقدام.",
-      [
-        "لندینگ",
-        "فروش",
-        "تبدیل"
-      ]
-    ],
-    [
-      "سایت شخصی یا آموزشی",
-      "ساختاری منظم برای معرفی تخصص، آموزش‌ها، نمونه‌کارها و مسیر ارتباط.",
-      [
-        "برند شخصی",
-        "آموزش",
-        "اعتماد"
-      ]
-    ],
-    [
-      "صفحه فروش دوره یا خدمات",
-      "صفحه‌ای فروش‌محور با تمرکز روی نیاز مخاطب، مزیت‌ها و ثبت‌نام.",
-      [
-        "فروش",
-        "CTA",
-        "محتوا"
-      ]
-    ],
-    [
-      "پروژه کامل‌تر با ساختار چندصفحه‌ای",
-      "تمرین یک تجربه کامل‌تر با چند صفحه، مسیر کاربر و خروجی قابل ارائه.",
-      [
-        "چندصفحه‌ای",
-        "مسیر کاربر",
-        "نمونه‌کار"
-      ]
-    ]
-  ],
-  "audience": [
-    "افراد مبتدی که دنبال مسیر روشن هستند",
-    "صاحبان کسب‌وکار",
-    "تولیدکنندگان محتوا",
-    "مدرس‌ها و مشاورها",
-    "فریلنسرهای تازه‌کار",
-    "طراحانی که می‌خواهند سریع‌تر خروجی بگیرند"
-  ],
-  "curriculum": [
-    [
-      "فصل ۱: شروع مسیر",
-      "آشنایی با ذهنیت عملی، ابزارها و برنامه ساخت اولین خروجی."
-    ],
-    [
-      "فصل ۲: تبدیل ایده به ساختار",
-      "تبدیل ایده خام به بخش‌های صفحه، پیام اصلی و مسیر حرکت کاربر."
-    ],
-    [
-      "فصل ۳: نوشتن درخواست‌های دقیق",
-      "یادگیری روش توضیح نیازها برای گرفتن خروجی کاربردی و قابل اصلاح."
-    ],
-    [
-      "فصل ۴: ساخت صفحه اصلی مدرن",
-      "طراحی یک صفحه حرفه‌ای با تمرکز روی چیدمان، پیام و دکمه‌ها."
-    ],
-    [
-      "فصل ۵: حرفه‌ای‌سازی ظاهر",
-      "بهبود تایپوگرافی، رنگ، فاصله‌گذاری، کارت‌ها و حس بصری."
-    ],
-    [
-      "فصل ۶: ریسپانسیو کردن صفحات",
-      "آماده‌سازی ظاهر برای موبایل، تبلت و دسکتاپ با تجربه کاربری تمیز."
-    ],
-    [
-      "فصل ۷: تحلیل و رفع خطاها",
-      "تشخیص مشکل، توضیح درست ایراد و اصلاح مرحله‌به‌مرحله."
-    ],
-    [
-      "فصل ۸: ساخت پروژه چندبخشی",
-      "ترکیب چند صفحه و بخش کاربردی برای خروجی کامل‌تر."
-    ],
-    [
-      "فصل ۹: آماده‌سازی نمونه‌کار",
-      "مرتب‌سازی فایل‌ها، کنترل کیفیت و آماده‌سازی پروژه برای نمایش."
-    ]
-  ],
-  "results": [
-    "می‌توانی یک صفحه کامل طراحی کنی",
-    "می‌توانی خروجی را سریع‌تر اصلاح کنی",
-    "می‌توانی خطاها را بهتر تحلیل کنی",
-    "می‌توانی نمونه‌کار اولیه بسازی",
-    "می‌توانی برای پروژه‌های کوچک آماده شوی"
-  ],
-  "testimonials": [
-    "قبل از این دوره فکر می‌کردم شروع طراحی سایت سخت است؛ اما مسیر مرحله‌به‌مرحله کمک کرد خروجی قابل دیدن بسازم.",
-    "بالاخره از تماشای آموزش‌های پراکنده خارج شدم و فهمیدم چطور ایده را به صفحه قابل ارائه تبدیل کنم.",
-    "آموزش منظم بود و سردرگم نشدم؛ مخصوصاً بخش اصلاح خطاها برایم خیلی کاربردی بود."
-  ],
-  "faqs": [
-    [
-      "آیا باید برنامه‌نویسی بلد باشم؟",
-      "نه. مسیر برای شروع طراحی شده و مفاهیم لازم را هنگام ساخت تمرین می‌کنی."
-    ],
-    [
-      "آیا این آموزش فقط معرفی ابزار است؟",
-      "نه. تمرکز اصلی روی تصمیم‌گیری، ساخت خروجی و اصلاح مرحله‌به‌مرحله است."
-    ],
-    [
-      "آیا خروجی قابل ارائه ساخته می‌شود؟",
-      "بله. چند مدل صفحه می‌سازی تا یادگیری فقط در حد تئوری نماند."
-    ],
-    [
-      "آیا AI جای یادگیری را می‌گیرد؟",
-      "نه. ابزارها نقش دستیار دارند؛ تو یاد می‌گیری چطور هدایت، بررسی و بهترشان کنی."
-    ],
-    [
-      "آیا برای شروع مناسب است؟",
-      "بله. اگر از مسیرهای پراکنده خسته شده‌ای، این دوره یک نقشه ساده و عملی می‌دهد."
-    ],
-    [
-      "آیا می‌توانم نمونه‌کار بسازم؟",
-      "بله. هدف نهایی این است که از ایده به خروجی قابل نمایش و نمونه‌کار اولیه برسی."
-    ]
-  ]
 }

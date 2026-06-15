@@ -12,8 +12,9 @@ function admin_header(string $title): void
         'leads.php' => ['label' => 'لیدها', 'icon' => 'bi-person-lines-fill'],
         'chats.php' => ['label' => 'چت‌ها', 'icon' => 'bi-chat-dots'],
         'settings.php' => ['label' => 'تنظیمات', 'icon' => 'bi-gear'],
-        'content.php' => ['label' => 'محتوای صفحه', 'icon' => 'bi-layout-text-window'],
+        'media.php' => ['label' => 'رسانه‌ها', 'icon' => 'bi-images'],
     ];
+    $sectionItems = landing_section_configs();
     ?>
 <!doctype html>
 <html lang="fa" dir="rtl">
@@ -46,6 +47,12 @@ function admin_header(string $title): void
         <nav class="admin-nav" aria-label="منوی پنل">
           <?php foreach ($items as $href => $item): ?>
             <a class="<?= $current === $href ? 'active' : '' ?>" href="<?= e($href) ?>">
+              <i class="bi <?= e($item['icon']) ?>"></i><span><?= e($item['label']) ?></span>
+            </a>
+          <?php endforeach; ?>
+          <div class="admin-nav-group">مدیریت سکشن‌های صفحه اصلی</div>
+          <?php foreach ($sectionItems as $key => $item): $href = 'section-editor.php?section=' . $key; ?>
+            <a class="<?= $current === 'section-editor.php' && ($_GET['section'] ?? '') === $key ? 'active' : '' ?>" href="<?= e($href) ?>">
               <i class="bi <?= e($item['icon']) ?>"></i><span><?= e($item['label']) ?></span>
             </a>
           <?php endforeach; ?>
