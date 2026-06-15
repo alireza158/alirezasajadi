@@ -20,6 +20,7 @@ const DATA_DIR = __DIR__ . '/../data';
 const ORDERS_FILE = DATA_DIR . '/orders.json';
 const SETTINGS_FILE = DATA_DIR . '/settings.json';
 const LANDING_CONTENT_FILE = DATA_DIR . '/landing-content.json';
+const CMS_CONTENT_FILE = DATA_DIR . '/cms-content.json';
 
 /**
  * مسیر داده‌های سرویس Node.js مشاور هوشمند
